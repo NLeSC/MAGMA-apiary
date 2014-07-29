@@ -12,7 +12,7 @@ MAGMa is an online application for the automatic chemical annotation of accurate
 
 # Authentication
 
-MAGMa supports cookie based authentication method. Login will set cookie and this cookie can be used to access the application.
+MAGMa uses cookie based authentication. Login will set cookie and this cookie can be used to access the application.
 
 MAGMa runs in 2 modes:
 
@@ -130,7 +130,6 @@ Form fields:
 
 Form fields:
 
-
 * structure_format, Can be 'smiles' or 'sdf'. See http://www.emetabolomics.org/magma/help for information on the different formats
 * structures, structures as string
 * structures_file, structures as file
@@ -143,6 +142,7 @@ Form fields:
 When molecule is uploaded or drawn then they can be metabolized.
 
 Form fields:
+
 * metabolize, Can be true==1 or false==0
 * scenario, json array of object with type and steps keys. 
 
@@ -410,7 +410,7 @@ A filter object has the following keys:
     * assigned, use null type filter
     * score, use numeric type filter, can only be used when `scanid` url parameter is set.
     * deltappm, use numeric type filter
-    * reaction,
+    * reactionsequence, use reaction type filter
     * metid, molecule id,  use numeric type filter
     * probability, use numeric type filter
     * molformula, use string type filter
@@ -432,6 +432,13 @@ A filter object has the following keys:
 * product, only used for reaction type filter, molecule identifier of molecule that has selected molecules as reactant
 * reactant, only used for reaction type filter, molecule identifier of molecule that has selected molecules as product
 * name, only used for reaction type filter, name of reaction, selects molecules which where reactant or product in the given reaction
+
+Example 1: Molecules which have been found in MS data 
+````json
+[{"type":"numeric","comparison":"gt","value":0,"field":"nhits"}]
+````
+Example 2: Molecules which are products of esterase reaction of molecule with id 1
+[{"reactant":1,"name":"esterase","type":"reaction","field":"reactionsequence"}]
 
 ## Paging
 
@@ -477,6 +484,17 @@ Valid `property` values are:
 
 ### Retrieve list of molecules [GET]
 
+Returned fields:
+
+* totalUnfiltered, total unpaged number of molecules without filtering
+* total, total unpaged number of molecules with filtering applied
+* rows, array of molecules, fields of a molecule:
+** origin, name of molecule derived from input or db lookup
+** smiles, inchi key
+** mol, Molfile of molecule.
+** reactionsequence, list of reactions
+* scans, array of scans in which the filtered molecules have fragments 
+
 + Response 200 (application/json)
 
         {
@@ -487,8 +505,8 @@ Valid `property` values are:
                 "smiles": "MTOBWJUHQXQURZ", 
                 "probability": null, 
                 "molformula": "C6H6O4", 
-                "assigned": false, "reference": 
-                "<a href=\"http://www.genome.jp/dbget-bin/www_bget?cpd:C00682\" target=\"_blank\">C00682 (Kegg)</a>", 
+                "assigned": false, 
+                "reference": "<a href=\"http://www.genome.jp/dbget-bin/www_bget?cpd:C00682\" target=\"_blank\">C00682 (Kegg)</a>", 
                 "mol": "5280366\n  -OEChem-08091222412D\n\n 10  9  0     0  0  0  0  0  0999 V2000 ... abbreviated for readability\n", 
                 "reactionsequence": {}, 
                 "isquery": true, 
