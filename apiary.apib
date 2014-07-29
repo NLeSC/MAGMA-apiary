@@ -24,7 +24,7 @@ MAGMa runs in 2 modes:
 ## Login [/login]
 
 ### Get anonymous token [GET]
-Used to get an anonymous authentication cookie when accessing http://www.emetabolomics.org/magma/ 
+Used to get an anonymous authentication cookie when accessing http://www.emetabolomics.org/magma/
 
 + Response 302 (text/html)
 
@@ -32,7 +32,7 @@ Used to get an anonymous authentication cookie when accessing http://www.emetabo
 
             Location: http://www.emetabolomics.org/magma/
             Set-Cookie: magma="4f300ccfd854edddccf4e6e8604e2c616e4a121fa77a4d8f5adbd68202369caffdb6a5d89c1aba6e2acf64ba8f4e55ff7ad615bc96420450a207d9ba8a2e05a753d76527M2Y3ZGE3YjMtZTNmYS00MTA4LWI4ODUtM2MzNjVjMzkyYTk1!userid_type:b64unicode"; Path=/magma; Domain=www.emetabolomics.org; HttpOnly
-    
+
     + Body
 
             Redirect to home page
@@ -51,7 +51,7 @@ Used when accessing https://www.emetabolomics.org/magma/
 
             Location: https://www.emetabolomics.org/magma/
             Set-Cookie: magma="4f300ccfd854edddccf4e6e8604e2c616e4a121fa77a4d8f5adbd68202369caffdb6a5d89c1aba6e2acf64ba8f4e55ff7ad615bc96420450a207d9ba8a2e05a753d76527M2Y3ZGE3YjMtZTNmYS00MTA4LWI4ODUtM2MzNjVjMzkyYTk1!userid_type:b64unicode"; Path=/magma; Domain=www.emetabolomics.org; HttpOnly
-    
+
     + Body
 
             Redirect to home page
@@ -112,7 +112,7 @@ Returns defaults settings to run a job.
 
 ## Submit a job [/start]
 
-A job is submitted by submitting a job query. 
+A job is submitted by submitting a job query.
 A job query is divided into 3 sections:
 
 ### 1. MS Data
@@ -139,14 +139,14 @@ Form fields:
 * excl_halo, Exclude halogenated compounds, only used when strucuture_database is set
 
 #### Metabolize
-When molecule is uploaded or drawn then they can be metabolized.
+When molecule is uploaded or a supplied as string then they can be metabolized.
 
 Form fields:
 
 * metabolize, Can be true==1 or false==0
-* scenario, json array of object with type and steps keys. 
+* scenario, json array of object with type and steps keys.
 
-Scenario type can be 'phase1', 'phase1_selected', 'phase2', 'phase2_selected', 'glycosidase','mass_filter', 'gut'. 
+Scenario type can be 'phase1', 'phase1_selected', 'phase2', 'phase2_selected', 'glycosidase','mass_filter', 'gut'.
 Scenario steps is the number of times transformation is performed.
 
 Example scenario:
@@ -173,11 +173,11 @@ Form fields:
 
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="ms_data_format"
-        
+
         mass_tree
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="ms_data"
-        
+
         353.087494: 69989984 (
             191.055756: 54674544 (
                 85.029587: 2596121,
@@ -213,57 +213,57 @@ Form fields:
             )
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="structure_database"
-        
+
         pubchem
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="max_mz"
-        
+
         1200
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="min_refscore"
-        
+
         1
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="excl_halo"
-        
+
         on
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="structure_format"
-        
+
         smiles
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="structures"
-        
-        
+
+
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="scenario"
-        
+
         [{"type":"phase1","steps":"2"},{"type":"phase2","steps":"1"}]
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="ionisation_mode"
-        
+
         -1
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="max_broken_bonds"
-        
+
         3
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="max_water_losses"
-        
+
         1
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="mz_precision"
-        
+
         5
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="mz_precision_abs"
-        
+
         0.001
         ------WebKitFormBoundary5kf6zWR9Aa98bbli
         Content-Disposition: form-data; name="ms_data_file"; filename=""
         Content-Type: application/octet-stream
-        
-        
+
+
         ------WebKitFormBoundary5kf6zWR9Aa98bbli--
 
 + Response 200 (application/json)
@@ -287,7 +287,7 @@ Form fields:
 
 ### Retrieve job status [GET]
 
-When `is_complete` is "false" then the status must be retrieved again after waiting a period. 
+When `is_complete` is "false" then the status must be retrieved again after waiting a period.
 When `is_complete` is "true" and `status` is "STOPPED" then results of the job can be retrieved.
 
 + Response 200 (application/json)
@@ -433,7 +433,7 @@ A filter object has the following keys:
 * reactant, only used for reaction type filter, molecule identifier of molecule that has selected molecules as product
 * name, only used for reaction type filter, name of reaction, selects molecules which where reactant or product in the given reaction
 
-Example 1: Molecules which have been found in MS data 
+Example 1: Molecules which have been found in MS data
 ````json
 [{"type":"numeric","comparison":"gt","value":0,"field":"nhits"}]
 ````
@@ -493,31 +493,31 @@ Returned fields:
 ** smiles, inchi key
 ** mol, Molfile of molecule.
 ** reactionsequence, list of reactions
-* scans, array of scans in which the filtered molecules have fragments 
+* scans, array of scans in which the filtered molecules have fragments
 
 + Response 200 (application/json)
 
         {
-            "totalUnfiltered": 209, 
-            "total": 209, 
+            "totalUnfiltered": 209,
+            "total": 209,
             "rows": [{
-                "origin": "2-Hydroxymuconic semialdehyde (5280366)", 
-                "smiles": "MTOBWJUHQXQURZ", 
-                "probability": null, 
-                "molformula": "C6H6O4", 
-                "assigned": false, 
-                "reference": "<a href=\"http://www.genome.jp/dbget-bin/www_bget?cpd:C00682\" target=\"_blank\">C00682 (Kegg)</a>", 
-                "mol": "5280366\n  -OEChem-08091222412D\n\n 10  9  0     0  0  0  0  0  0999 V2000 ... abbreviated for readability\n", 
-                "reactionsequence": {}, 
-                "isquery": true, 
-                "mim": 142.026609, 
-                "logp": 0.2, 
-                "level": 1, 
-                "metid": 2, 
+                "origin": "2-Hydroxymuconic semialdehyde (5280366)",
+                "smiles": "MTOBWJUHQXQURZ",
+                "probability": null,
+                "molformula": "C6H6O4",
+                "assigned": false,
+                "reference": "<a href=\"http://www.genome.jp/dbget-bin/www_bget?cpd:C00682\" target=\"_blank\">C00682 (Kegg)</a>",
+                "mol": "5280366\n  -OEChem-08091222412D\n\n 10  9  0     0  0  0  0  0  0999 V2000 ... abbreviated for readability\n",
+                "reactionsequence": {},
+                "isquery": true,
+                "mim": 142.026609,
+                "logp": 0.2,
+                "level": 1,
+                "metid": 2,
                 "nhits": 1
             }],
             "scans": [{
-                "rt": 2.1296, 
+                "rt": 2.1296,
                 "id": 80
             }]
         }
@@ -548,7 +548,7 @@ Returned fields:
 
         5280366
           -OEChem-08091222412D
-        
+
          10  9  0     0  0  0  0  0  0999 V2000
             4.2690    1.2500    0.0000 O   0  0  0
             2.5369    0.2500    0.0000 O   0  0  0
@@ -572,31 +572,31 @@ Returned fields:
         M  END
         > <origin>
         2-Hydroxymuconic semialdehyde (5280366)
-        
+
         > <smiles>
         MTOBWJUHQXQURZ
-        
+
         > <probability>
         None
-        
+
         > <reactionsequence>
         {}
-        
+
         > <nhits>
         1
-        
+
         > <molformula>
         C6H6O4
-        
+
         > <mim>
         142.026609
-        
+
         > <logp>
         0.2
-        
+
         > <reference>
         <a href="http://www.genome.jp/dbget-bin/www_bget?cpd:C00682" target="_blank">C00682 (Kegg)</a>
-        
+
         $$$$
 
 # Group Mass spectra
@@ -648,7 +648,7 @@ Scan fields:
               }
            ]
         }
-        
+
 ## Mass spectra scan [/results/{jobid}/mspectra/{scanid}.json{?mslevel}]
 
 + Parameters
@@ -812,7 +812,7 @@ Returns intensities in all ms level 1 scans of the selected molecule.
            ]
         }
 
-## Assign molecule to peak [/rpc/{jobid}/assign] 
+## Assign molecule to peak [/rpc/{jobid}/assign]
 
 + Parameters
     + jobid ... (string) Job identifier
@@ -828,7 +828,7 @@ Returns intensities in all ms level 1 scans of the selected molecule.
 + Response 200 (application/json)
 
         {
-            "success": true, 
+            "success": true,
             "jobid": "aa939da6-bec1-4c82-8df5-df48391e534b"
         }
 
@@ -847,6 +847,6 @@ Returns intensities in all ms level 1 scans of the selected molecule.
 + Response 200 (application/json)
 
         {
-            "success": true, 
+            "success": true,
             "jobid": "aa939da6-bec1-4c82-8df5-df48391e534b"
         }
