@@ -1,0 +1,735 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>MAGMa</title><link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"><link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.2/css/font-awesome.min.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Inconsolata|Raleway:200"><style>/* Highlight.js Theme */
+.tomorrow-comment,pre .comment,pre .title{color:#8e908c}.tomorrow-red,pre .attribute,pre .css .class,pre .css .id,pre .css .pseudo,pre .html .doctype,pre .regexp,pre .ruby .constant,pre .tag,pre .variable,pre .xml .doctype,pre .xml .pi,pre .xml .tag .title{color:#c82829}.tomorrow-orange,pre .built_in,pre .constant,pre .literal,pre .number,pre .params,pre .preprocessor{color:#f5871f}.tomorrow-yellow,pre .class,pre .css .rules .attribute,pre .ruby .class .title{color:#eab700}.tomorrow-green,pre .header,pre .inheritance,pre .ruby .symbol,pre .string,pre .value,pre .xml .cdata{color:#718c00}.tomorrow-aqua,pre .css .hexcolor{color:#3e999f}.tomorrow-blue,pre .coffeescript .title,pre .function,pre .javascript .title,pre .perl .sub,pre .python .decorator,pre .python .title,pre .ruby .function .title,pre .ruby .title .keyword{color:#4271ae}.tomorrow-purple,pre .javascript .function,pre .keyword{color:#8959a8}pre code{display:block;background:#fff;color:#4d4d4c;font-family:Menlo,Monaco,Consolas,monospace;line-height:1.5;border:1px solid #ccc;padding:10px}</style><style type="text/css">body,
+h4,
+h5 {
+  font-family: 'Roboto' sans-serif !important;
+}
+h1,
+h2,
+h3,
+.aglio {
+  font-family: 'Raleway' sans-serif !important;
+}
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a {
+  display: none;
+}
+h1:hover a,
+h2:hover a,
+h3:hover a,
+h4:hover a,
+h5:hover a {
+  display: inline;
+}
+code {
+  color: #444;
+  background-color: #ddd;
+  font-family: 'Inconsolata' monospace !important;
+}
+a[data-target] {
+  cursor: pointer;
+}
+h4 {
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.back-to-top {
+  position: fixed;
+  z-index: 1;
+  bottom: 0px;
+  right: 24px;
+  padding: 4px 8px;
+  background-color: #eee;
+  text-decoration: none !important;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  border-left: 1px solid rgba(0,0,0,0.1);
+  border-right: 1px solid rgba(0,0,0,0.1);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+.panel {
+  overflow: hidden;
+}
+.panel-heading code {
+  color: #c7254e;
+  background-color: transparent;
+}
+.panel-heading h3 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+a.list-group-item {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+a.list-group-item.heading {
+  background-color: #f5f5f5;
+}
+.list-group-item.collapse {
+  display: none;
+}
+</style></head><body><a href="#top" class="text-muted back-to-top"><i class="fa fa-toggle-up"></i>&nbsp;Back to top</a><div class="container"><div class="row"><nav id="nav" style="margin-top: 38px;" class="col-md-3 collapse hidden-sm hidden-xs"><div class="list-group"><a href="#" class="list-group-item heading">Home</a></div><div class="list-group"><a href="#page:user" class="list-group-item heading">User</a><a href="#page:user,header:user-login" class="list-group-item"><i class="fa fa-bars"></i>&nbsp;Login</a><a href="#page:user,header:user-login-get" style="padding-left: 32px" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Get anonymous token</a><a href="#page:user,header:user-login-post" style="padding-left: 32px" class="list-group-item"><i class="fa fa-plus-square"></i>&nbsp;Login to application</a><a href="#page:user,header:user-logout" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Logout</a></div><div class="list-group"><a href="#page:job" class="list-group-item heading">Job</a><a href="#page:job,header:job-defaults" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Defaults</a><a href="#page:job,header:job-submit-a-job" class="list-group-item"><i class="fa fa-plus-square"></i>&nbsp;Submit a job</a><a href="#page:job,header:job-job-status" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Job status</a><a href="#page:job,header:job-single-result" class="list-group-item"><i class="fa fa-bars"></i>&nbsp;Single result</a><a href="#page:job,header:job-single-result-delete" style="padding-left: 32px" class="list-group-item"><i class="fa fa-warning"></i>&nbsp;Delete a job</a><a href="#page:job,header:job-single-result-put" style="padding-left: 32px" class="list-group-item"><i class="fa fa-pencil"></i>&nbsp;Update a job</a><a href="#page:job,header:job-stderr-log" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Stderr log</a><a href="#page:job,header:job-stdout-log" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Stdout log</a><a href="#page:job,header:job-job-settings" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Job settings</a></div><div class="list-group"><a href="#page:molecules" class="list-group-item heading">Molecules</a><a href="#page:molecules,header:molecules-molecules-as-json" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Molecules as json</a><a href="#page:molecules,header:molecules-molecules-as-comma-seperated-file" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Molecules as comma seperated file</a><a href="#page:molecules,header:molecules-molecules-as-sdf-file" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Molecules as SDF file</a></div><div class="list-group"><a href="#page:mass-spectra" class="list-group-item heading">Mass spectra</a><a href="#page:mass-spectra,header:mass-spectra-chromatogram" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Chromatogram</a><a href="#page:mass-spectra,header:mass-spectra-mass-spectra-scan" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Mass spectra scan</a><a href="#page:mass-spectra,header:mass-spectra-extracted-ion-chromatogram" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Extracted ion chromatogram</a></div><div class="list-group"><a href="#page:fragments" class="list-group-item heading">Fragments</a><a href="#page:fragments,header:fragments-fragments" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Fragments</a><a href="#page:fragments,header:fragments-assign-molecule-to-peak" class="list-group-item"><i class="fa fa-plus-square"></i>&nbsp;Assign molecule to peak</a><a href="#page:fragments,header:fragments-unassign-molecules-from-peak" class="list-group-item"><i class="fa fa-plus-square"></i>&nbsp;Unassign molecules from peak</a></div><p style="text-align: center"><a href="http://www.emetabolomics.org/magma/">http://www.emetabolomics.org/magma/</a></p></nav><div class="col-md-9"><div data-bind="visible: page() == 'home'"><header><div class="page-header"><h1 id="top">MAGMa</h1></div></header><div class="description"><p>MAGMa is an online application for the automatic chemical annotation of accurate multistage MSn spectral data.</p>
+<ul>
+<li>MSn data can be uploaded as a hierarchical tree of fragment peaks, either based on m/z values or elemental formulas, or as an mzXML file of the raw data.</li>
+<li>Candidate molecules are automatically retrieved from PubChem, from a subset of PubChem compounds present in Kegg, or from the Human Metabolome Database.</li>
+<li>Candidate molecules can be predicted based on in silico reaction rules describing microbiotic and human biotransformations</li>
+<li>For each candidate molecule, substructures are generated and matched with the observed fragment peaks.</li>
+<li>The web browser enables efficient mining of the automatically annotated data.</li>
+</ul>
+<h1 id="authentication">Authentication</h1>
+<p>MAGMa uses cookie based authentication. Login will set cookie and this cookie can be used to access the application.</p>
+<p>MAGMa runs in 2 modes:</p>
+<ol>
+<li><a href="http://www.emetabolomics.org/magma/">http://www.emetabolomics.org/magma/</a>, anonymous access, visiting [/login] will give a authentication cookie that can be used for other requests.</li>
+<li><a href="https://www.emetabolomics.org/magma/">https://www.emetabolomics.org/magma/</a>, must login, allows bigger jobs to run. Access must be requested at Lars.Ridder@wur.nl</li>
+</ol>
+</div><a href="#page:user" class="btn btn-default pull-right">Next&nbsp;<i class="fa fa-arrow-circle-right"></i></a><div class="clearfix"></div><hr></div><div data-bind="visible: page() == 'user', style: {marginTop: page() == 'user' ? '38px' : ''}"><div class="panel panel-default"><div class="panel-heading"><h3 id="user">User&nbsp;<a href="#page:user"><i class="fa fa-link"></i></a></h3></div><div class="panel-body"><h4 id="user-login">Login&nbsp;<a href="#page:user,header:user-login"><i class="fa fa-link"></i></a></h4><section id="user-login-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Get anonymous token</span><a href="#page:user,header:user-login-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/login</code></div><div class="panel-body"><p>Used to get an anonymous authentication cookie when accessing <a href="http://www.emetabolomics.org/magma/">http://www.emetabolomics.org/magma/</a> </p>
+</div><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>302</code></strong><a data-toggle="collapse" data-target="#534415" class="pull-right">Toggle</a></li><li id="534415" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">text/html</span><br><span class="attribute">Location</span>: <span class="string">http://www.emetabolomics.org/magma/</span><br><span class="attribute">Set-Cookie</span>: <span class="string">magma="4f300ccfd854edddccf4e6e8604e2c616e4a121fa77a4d8f5adbd68202369caffdb6a5d89c1aba6e2acf64ba8f4e55ff7ad615bc96420450a207d9ba8a2e05a753d76527M2Y3ZGE3YjMtZTNmYS00MTA4LWI4ODUtM2MzNjVjMzkyYTk1!userid_type:b64unicode"; Path=/magma; Domain=www.emetabolomics.org; HttpOnly</span><br></code></pre><h5>Body</h5><pre><code>Redirect <span class="keyword">to</span> home page
+</code></pre></li></ul></section><section id="user-login-post" class="panel panel-success"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Login to application</span><a href="#page:user,header:user-login-post" class="btn btn-xs btn-success">POST</a>&nbsp;<code>/login</code></div><div class="panel-body"><p>Used when accessing <a href="https://www.emetabolomics.org/magma/">https://www.emetabolomics.org/magma/</a></p>
+</div><ul class="list-group"><li class="list-group-item"><strong>Request</strong><a data-toggle="collapse" data-target="#798967" class="pull-right">Toggle</a></li><li id="798967" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/x-www-form-urlencoded; charset=UTF-8</span><br></code></pre><h5>Body</h5><pre><code><span class="title">userid</span>=myusername&amp;
+<span class="title">password</span>=mypassword
+</code></pre></li><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>302</code></strong><a data-toggle="collapse" data-target="#918877" class="pull-right">Toggle</a></li><li id="918877" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">text/html</span><br><span class="attribute">Location</span>: <span class="string">https://www.emetabolomics.org/magma/</span><br><span class="attribute">Set-Cookie</span>: <span class="string">magma="4f300ccfd854edddccf4e6e8604e2c616e4a121fa77a4d8f5adbd68202369caffdb6a5d89c1aba6e2acf64ba8f4e55ff7ad615bc96420450a207d9ba8a2e05a753d76527M2Y3ZGE3YjMtZTNmYS00MTA4LWI4ODUtM2MzNjVjMzkyYTk1!userid_type:b64unicode"; Path=/magma; Domain=www.emetabolomics.org; HttpOnly</span><br></code></pre><h5>Body</h5><pre><code>Redirect <span class="keyword">to</span> home page
+</code></pre></li></ul></section><h4 id="user-logout">Logout&nbsp;<a href="#page:user,header:user-logout"><i class="fa fa-link"></i></a></h4><section id="user-logout-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Logout</span><a href="#page:user,header:user-logout-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/logout</code></div><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>302</code></strong><a data-toggle="collapse" data-target="#408694" class="pull-right">Toggle</a></li><li id="408694" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">text/html</span><br><span class="attribute">Location</span>: <span class="string">https://www.emetabolomics.org/magma/</span><br><span class="attribute">Set-Cookie</span>: <span class="string">magma=""; Path=/magma; Domain=www.emetabolomics.org; Max-Age=0; Expires=Wed, 31-Dec-97 23:59:59 GMT; HttpOnly</span><br></code></pre><h5>Body</h5><pre><code>Redirect <span class="keyword">to</span> home page
+</code></pre></li></ul></section></div></div><a href="#page:job" class="btn btn-default pull-right">Next&nbsp;<i class="fa fa-arrow-circle-right"></i></a><a href="#" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Previous</a><div class="clearfix"></div><hr></div><div data-bind="visible: page() == 'job', style: {marginTop: page() == 'job' ? '38px' : ''}"><div class="panel panel-default"><div class="panel-heading"><h3 id="job">Job&nbsp;<a href="#page:job"><i class="fa fa-link"></i></a></h3></div><div class="panel-body"><p>A job is submitted, polled for it’s status and when complete results can be retrieved.</p>
+<h4 id="job-defaults">Defaults&nbsp;<a href="#page:job,header:job-defaults"><i class="fa fa-link"></i></a></h4><section id="job-defaults-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve defaults</span><a href="#page:job,header:job-defaults-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/defaults.json</code></div><div class="panel-body"><p>Returns defaults settings to run a job.</p>
+</div><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#675762" class="pull-right">Toggle</a></li><li id="675762" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+   "<span class="attribute">success</span>" : <span class="value"><span class="literal">true</span></span>,
+   "<span class="attribute">data</span>" : <span class="value">{
+      "<span class="attribute">mz_precision</span>" : <span class="value"><span class="number">5</span></span>,
+      "<span class="attribute">precursor_mz_precision</span>" : <span class="value"><span class="number">0.005</span></span>,
+      "<span class="attribute">ionisation_mode</span>" : <span class="value"><span class="number">1</span></span>,
+      "<span class="attribute">max_water_losses</span>" : <span class="value"><span class="number">1</span></span>,
+      "<span class="attribute">max_broken_bonds</span>" : <span class="value"><span class="number">3</span></span>,
+      "<span class="attribute">mz_precision_abs</span>" : <span class="value"><span class="number">0.001</span></span>,
+      "<span class="attribute">ms_intensity_cutoff</span>" : <span class="value"><span class="number">0</span></span>,
+      "<span class="attribute">ms_data_area</span>" : <span class="value"><span class="string">""</span></span>,
+      "<span class="attribute">msms_intensity_cutoff</span>" : <span class="value"><span class="number">5</span></span>,
+      "<span class="attribute">abs_peak_cutoff</span>" : <span class="value"><span class="number">5000</span></span>,
+      "<span class="attribute">max_ms_level</span>" : <span class="value"><span class="number">10</span></span>,
+      "<span class="attribute">ms_data_format</span>" : <span class="value"><span class="string">"mzxml"</span></span>,
+      "<span class="attribute">scenario</span>" : <span class="value">[
+         {
+            "<span class="attribute">steps</span>" : <span class="value"><span class="string">"2"</span></span>,
+            "<span class="attribute">type</span>" : <span class="value"><span class="string">"phase1"</span>
+         </span>},
+         {
+            "<span class="attribute">type</span>" : <span class="value"><span class="string">"phase2"</span></span>,
+            "<span class="attribute">steps</span>" : <span class="value"><span class="string">"1"</span>
+         </span>}
+      ]
+   </span>}
+</span>}
+</code></pre></li></ul></section><h4 id="job-submit-a-job">Submit a job&nbsp;<a href="#page:job,header:job-submit-a-job"><i class="fa fa-link"></i></a></h4><p>A job is submitted by submitting a job query. 
+A job query is divided into 3 sections:</p>
+<h3 id="1-ms-data">1. MS Data</h3>
+<p>Form fields:</p>
+<ul>
+<li>ms_data_format, can be mzxml, mass_tree or form_tree. See <a href="http://www.emetabolomics.org/magma/help">http://www.emetabolomics.org/magma/help</a> for information on the different formats</li>
+<li>ms_data, ms data as a string</li>
+<li>ms_data_file, ms data as a file upload</li>
+<li>max_ms_level, Maximum depth of scan which will be stored</li>
+<li>abs_peak_cutoff, Absolute intensity threshold for storing peaks in database</li>
+<li>scan, Read only spectral tree specified by MS1 scan number</li>
+</ul>
+<h3 id="2-molecules">2. Molecules</h3>
+<p>Form fields:</p>
+<ul>
+<li>structure_format, Can be ‘smiles’ or ‘sdf’. See <a href="http://www.emetabolomics.org/magma/help">http://www.emetabolomics.org/magma/help</a> for information on the different formats</li>
+<li>structures, structures as string</li>
+<li>structures_file, structures as file</li>
+<li>structure_database, Chemical structure database, can be pubchem, kegg or hmdb. When set structures and structures_file will be ignored.</li>
+<li>max_mz, Mass limit for retrieving candidate molecules, only used when strucuture_database is set</li>
+<li>min_refscore, Minimum number of related PubChem substances, only used when strucuture_database is set</li>
+<li>excl_halo, Exclude halogenated compounds, only used when strucuture_database is set</li>
+</ul>
+<h4 id="metabolize">Metabolize</h4>
+<p>When molecule is uploaded or drawn then they can be metabolized.</p>
+<p>Form fields:</p>
+<ul>
+<li>metabolize, Can be true==1 or false==0</li>
+<li>scenario, json array of object with type and steps keys. </li>
+</ul>
+<p>Scenario type can be ‘phase1’, ‘phase1_selected’, ‘phase2’, ‘phase2_selected’, ‘glycosidase’,’mass_filter’, ‘gut’. 
+Scenario steps is the number of times transformation is performed.</p>
+<p>Example scenario:</p>
+<pre><code class="lang-json">[{"<span class="attribute">type</span>": <span class="value"><span class="string">"phase1"</span></span>, "<span class="attribute">steps</span>": <span class="value"><span class="number">2</span></span>}, {"<span class="attribute">type</span>": <span class="value"><span class="string">"phase2"</span></span>, "<span class="attribute">steps</span>": <span class="value"><span class="number">1</span>]</span></code></pre>
+<h3 id="3-parameter-settings">3. Parameter settings</h3>
+<p>Form fields:</p>
+<ul>
+<li>ionisation_mode, Can be -1 or 1</li>
+<li>max_broken_bonds, Maximum number of bond breaks to generate substructures</li>
+<li>max_water_losses, Maximum number of additional water (OH) and/or ammonia (NH2) losses</li>
+<li>mz_precision, Maximum relative m/z error (ppm)</li>
+<li>mz_precision_abs, Maximum absolute m/z error (Da)</li>
+<li>precursor_mz_precision, Maximum absolute error of precursor m/z values</li>
+<li>ms_intensity_cutoff, Minimum intensity of MS1 precursor ion peaks to be annotated</li>
+<li>msms_intensity_cutoff, Minimum intensity of fragment peaks to be annotated, as percentage of basepeak</li>
+</ul>
+<section id="job-submit-a-job-post" class="panel panel-success"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Submit a job</span><a href="#page:job,header:job-submit-a-job-post" class="btn btn-xs btn-success">POST</a>&nbsp;<code>/start</code></div><ul class="list-group"><li class="list-group-item"><strong>Request</strong><a data-toggle="collapse" data-target="#188881" class="pull-right">Toggle</a></li><li id="188881" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">multipart/form-data;boundary=------WebKitFormBoundary5kf6zWR9Aa98bbli</span><br></code></pre><h5>Body</h5><pre><code><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="ms_data_format"</span>
+
+<span class="comment">mass_tree</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="ms_data"</span>
+
+<span class="comment">353</span><span class="string">.</span><span class="comment">087494:</span> <span class="comment">69989984</span> <span class="comment">(</span>
+    <span class="comment">191</span><span class="string">.</span><span class="comment">055756:</span> <span class="comment">54674544</span> <span class="comment">(</span>
+        <span class="comment">85</span><span class="string">.</span><span class="comment">029587:</span> <span class="comment">2596121</span><span class="string">,</span>
+        <span class="comment">93</span><span class="string">.</span><span class="comment">034615:</span> <span class="comment">1720164</span><span class="string">,</span>
+        <span class="comment">109</span><span class="string">.</span><span class="comment">029442:</span> <span class="comment">917026</span><span class="string">,</span>
+        <span class="comment">111</span><span class="string">.</span><span class="comment">045067:</span> <span class="comment">1104891</span> <span class="comment">(</span>
+            <span class="comment">81</span><span class="string">.</span><span class="comment">034691:</span> <span class="comment">28070</span><span class="string">,</span>
+            <span class="comment">83</span><span class="string">.</span><span class="comment">014069:</span> <span class="comment">7618</span><span class="string">,</span>
+            <span class="comment">83</span><span class="string">.</span><span class="comment">050339:</span> <span class="comment">25471</span><span class="string">,</span>
+            <span class="comment">93</span><span class="string">.</span><span class="comment">034599:</span> <span class="comment">36300</span><span class="string">,</span>
+            <span class="comment">96</span><span class="string">.</span><span class="comment">021790:</span> <span class="comment">8453</span>
+            <span class="comment">)</span><span class="string">,</span>
+        <span class="comment">127</span><span class="string">.</span><span class="comment">039917:</span> <span class="comment">2890439</span> <span class="comment">(</span>
+            <span class="comment">57</span><span class="string">.</span><span class="comment">034718:</span> <span class="comment">16911</span><span class="string">,</span>
+            <span class="comment">81</span><span class="string">.</span><span class="comment">034706:</span> <span class="comment">41459</span><span class="string">,</span>
+            <span class="comment">83</span><span class="string">.</span><span class="comment">050301:</span> <span class="comment">35131</span><span class="string">,</span>
+            <span class="comment">85</span><span class="string">.</span><span class="comment">029533:</span> <span class="comment">236887</span><span class="string">,</span>
+            <span class="comment">99</span><span class="string">.</span><span class="comment">045074:</span> <span class="comment">73742</span><span class="string">,</span>
+            <span class="comment">109</span><span class="string">.</span><span class="comment">029404:</span> <span class="comment">78094</span>
+            <span class="comment">)</span><span class="string">,</span>
+        <span class="comment">171</span><span class="string">.</span><span class="comment">029587:</span> <span class="comment">905226</span><span class="string">,</span>
+        <span class="comment">173</span><span class="string">.</span><span class="comment">045212:</span> <span class="comment">2285841</span> <span class="comment">(</span>
+            <span class="comment">71</span><span class="string">.</span><span class="comment">013992:</span> <span class="comment">27805</span><span class="string">,</span>
+            <span class="comment">93</span><span class="string">.</span><span class="comment">034569:</span> <span class="comment">393710</span><span class="string">,</span>
+            <span class="comment">111</span><span class="string">.</span><span class="comment">008629:</span> <span class="comment">26219</span><span class="string">,</span>
+            <span class="comment">111</span><span class="string">.</span><span class="comment">045029:</span> <span class="comment">339595</span><span class="string">,</span>
+            <span class="comment">137</span><span class="string">.</span><span class="comment">024292:</span> <span class="comment">27668</span><span class="string">,</span>
+            <span class="comment">155</span><span class="string">.</span><span class="comment">034653:</span> <span class="comment">145773</span>
+            <span class="comment">)</span><span class="string">,</span>
+        <span class="comment">191</span><span class="string">.</span><span class="comment">055725:</span> <span class="comment">17000514</span>
+        <span class="comment">)</span><span class="string">,</span>
+    <span class="comment">353</span><span class="string">.</span><span class="comment">087097:</span> <span class="comment">4146696</span>
+    <span class="comment">)</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="structure_database"</span>
+
+<span class="comment">pubchem</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="max_mz"</span>
+
+<span class="comment">1200</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="min_refscore"</span>
+
+<span class="comment">1</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="excl_halo"</span>
+
+<span class="comment">on</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="structure_format"</span>
+
+<span class="comment">smiles</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="structures"</span>
+
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="scenario"</span>
+
+<span class="title">[</span><span class="comment">{"type":"phase1"</span><span class="string">,</span><span class="comment">"steps":"2"}</span><span class="string">,</span><span class="comment">{"type":"phase2"</span><span class="string">,</span><span class="comment">"steps":"1"}</span><span class="title">]</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="ionisation_mode"</span>
+
+<span class="literal">-</span><span class="comment">1</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="max_broken_bonds"</span>
+
+<span class="comment">3</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="max_water_losses"</span>
+
+<span class="comment">1</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="mz_precision"</span>
+
+<span class="comment">5</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="mz_precision_abs"</span>
+
+<span class="comment">0</span><span class="string">.</span><span class="comment">001</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Disposition:</span> <span class="comment">form</span><span class="literal">-</span><span class="comment">data;</span> <span class="comment">name="ms_data_file";</span> <span class="comment">filename=""</span>
+<span class="comment">Content</span><span class="literal">-</span><span class="comment">Type:</span> <span class="comment">application/octet</span><span class="literal">-</span><span class="comment">stream</span>
+
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="comment">WebKitFormBoundary5kf6zWR9Aa98bbli</span><span class="literal">-</span><span class="literal">-</span>
+</code></pre></li><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#842706" class="pull-right">Toggle</a></li><li id="842706" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+    "<span class="attribute">success</span>": <span class="value"><span class="literal">true</span></span>,
+    "<span class="attribute">jobid</span>": <span class="value"><span class="string">"b1eee101-dcc6-435e-baa8-d35e688c408e"</span>
+</span>}
+</code></pre></li><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>500</code></strong><a data-toggle="collapse" data-target="#977313" class="pull-right">Toggle</a></li><li id="977313" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+    "<span class="attribute">success</span>": <span class="value"><span class="literal">false</span></span>,
+    "<span class="attribute">msg</span>": <span class="value"><span class="string">"Unable to submit query"</span>
+</span>}
+</code></pre></li></ul></section><h4 id="job-job-status">Job status&nbsp;<a href="#page:job,header:job-job-status"><i class="fa fa-link"></i></a></h4><section id="job-job-status-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve job status</span><a href="#page:job,header:job-job-status-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/status/{jobid}.json</code></div><div class="panel-body"><p>When <code>is_complete</code> is “false” then the status must be retrieved again after waiting a period. 
+When <code>is_complete</code> is “true” and <code>status</code> is “STOPPED” then results of the job can be retrieved.</p>
+</div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#828322" class="pull-right">Toggle</a></li><li id="828322" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+    "<span class="attribute">status</span>": <span class="value"><span class="string">"STOPPED"</span></span>,
+    "<span class="attribute">is_complete</span>": <span class="value"><span class="literal">true</span></span>,
+    "<span class="attribute">jobid</span>": <span class="value"><span class="string">"b1eee101-dcc6-435e-baa8-d35e688c408e"</span>
+</span>}
+</code></pre></li></ul></section><h4 id="job-single-result">Single result&nbsp;<a href="#page:job,header:job-single-result"><i class="fa fa-link"></i></a></h4><section id="job-single-result-delete" class="panel panel-danger"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Delete a job</span><a href="#page:job,header:job-single-result-delete" class="btn btn-xs btn-danger">DELETE</a>&nbsp;<code>/results/{jobid}</code></div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#917684" class="pull-right">Toggle</a></li><li id="917684" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+    "<span class="attribute">success</span>": <span class="value"><span class="literal">true</span></span>,
+    "<span class="attribute">message</span>": <span class="value"><span class="string">"Deleted job"</span>
+</span>}
+</code></pre></li><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>500</code></strong><a data-toggle="collapse" data-target="#877775" class="pull-right">Toggle</a></li><li id="877775" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+    "<span class="attribute">success</span>": <span class="value"><span class="literal">true</span></span>,
+    "<span class="attribute">msg</span>": <span class="value"><span class="string">"Failed to cancel job"</span>
+</span>}
+</code></pre></li></ul></section><section id="job-single-result-put" class="panel panel-warning"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Update a job</span><a href="#page:job,header:job-single-result-put" class="btn btn-xs btn-warning">PUT</a>&nbsp;<code>/results/{jobid}</code></div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Request</strong><a data-toggle="collapse" data-target="#150973" class="pull-right">Toggle</a></li><li id="150973" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+    "<span class="attribute">description</span>": <span class="value"><span class="string">"New job description"</span></span>,
+    "<span class="attribute">ms_filename</span>": <span class="value"><span class="string">"New Mass spectra file name"</span></span>,
+    "<span class="attribute">is_public</span>": <span class="value"><span class="literal">false</span>
+</span>}
+</code></pre></li><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#882344" class="pull-right">Toggle</a></li><li id="882344" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+    "<span class="attribute">success</span>": <span class="value"><span class="literal">true</span></span>,
+    "<span class="attribute">message</span>": <span class="value"><span class="string">"Updated job"</span>
+</span>}
+</code></pre></li></ul></section><h4 id="job-stderr-log">Stderr log&nbsp;<a href="#page:job,header:job-stderr-log"><i class="fa fa-link"></i></a></h4><p>Used for debugging.</p>
+<section id="job-stderr-log-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve stderr log</span><a href="#page:job,header:job-stderr-log-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/results/{jobid}/stderr.txt</code></div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#281403" class="pull-right">Toggle</a></li><li id="281403" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">text/plain</span><br></code></pre><h5>Body</h5><pre><code><span class="attribute">WARNING</span>:<span class="attribute">root</span>:Build spectra
+<span class="attribute">WARNING</span>:<span class="attribute">root</span>:Searching structures
+<span class="attribute">WARNING</span>:<span class="attribute">root</span>:calculating <span class="literal">on</span> <span class="number">1</span> cpus !!!
+Metabolite <span class="number">1</span><span class="function"> -&gt;</span> <span class="number">1573</span> <span class="attribute">fragments</span>: CHLOROGENIC ACID (<span class="number">1794427</span>)
+<span class="attribute">Scan</span>: <span class="number">1</span> - <span class="attribute">Mz</span>: <span class="number">353.087805745</span> - <span class="attribute">Score</span>: <span class="number">62790.1532877</span>
+Metabolite <span class="number">2</span><span class="function"> -&gt;</span> <span class="number">1078</span> <span class="attribute">fragments</span>: Scopolin (<span class="number">439514</span>)
+<span class="attribute">Scan</span>: <span class="number">1</span> - <span class="attribute">Mz</span>: <span class="number">353.087805745</span> - <span class="attribute">Score</span>: <span class="number">221988.051709</span>
+Metabolite <span class="number">3</span><span class="function"> -&gt;</span> <span class="number">1327</span> <span class="attribute">fragments</span>: Biflorin (<span class="number">441959</span>)
+<span class="attribute">Scan</span>: <span class="number">1</span> - <span class="attribute">Mz</span>: <span class="number">353.087805745</span> - <span class="attribute">Score</span>: <span class="number">249551.191514</span>
+</code></pre></li></ul></section><h4 id="job-stdout-log">Stdout log&nbsp;<a href="#page:job,header:job-stdout-log"><i class="fa fa-link"></i></a></h4><p>Used for debugging.</p>
+<section id="job-stdout-log-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve stdout log</span><a href="#page:job,header:job-stdout-log-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/results/{jobid}/stdout.txt</code></div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#950266" class="pull-right">Toggle</a></li><li id="950266" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">text/plain</span><br></code></pre><h5>Body</h5><pre><code><span class="comment">353</span><span class="string">.</span><span class="comment">087806:</span> <span class="comment">69989984</span> <span class="comment">(191</span><span class="string">.</span><span class="comment">056112:</span> <span class="comment">54674544</span> <span class="comment">(85</span><span class="string">.</span><span class="comment">029503:</span> <span class="comment">2596121</span><span class="string">,</span> <span class="comment">93</span><span class="string">.</span><span class="comment">034588:</span> <span class="comment">1720164</span><span class="string">,</span> <span class="comment">109</span><span class="string">.</span><span class="comment">029503:</span> <span class="comment">917026</span><span class="string">,</span> <span class="comment">111</span><span class="string">.</span><span class="comment">045153:</span> <span class="comment">1104891</span> <span class="comment">(81</span><span class="string">.</span><span class="comment">034588:</span> <span class="comment">28070</span><span class="string">,</span> <span class="comment">83</span><span class="string">.</span><span class="comment">013853:</span> <span class="comment">7618</span><span class="string">,</span> <span class="comment">83</span><span class="string">.</span><span class="comment">050238:</span> <span class="comment">25471</span><span class="string">,</span> <span class="comment">93</span><span class="string">.</span><span class="comment">034588:</span> <span class="comment">36300</span><span class="string">,</span> <span class="comment">96</span><span class="string">.</span><span class="comment">021678:</span> <span class="comment">8453)</span><span class="string">,</span> <span class="comment">127</span><span class="string">.</span><span class="comment">040068:</span> <span class="comment">2890439</span> <span class="comment">(57</span><span class="string">.</span><span class="comment">034588:</span> <span class="comment">16911</span><span class="string">,</span> <span class="comment">81</span><span class="string">.</span><span class="comment">034588:</span> <span class="comment">41459</span><span class="string">,</span> <span class="comment">83</span><span class="string">.</span><span class="comment">050238:</span> <span class="comment">35131</span><span class="string">,</span> <span class="comment">85</span><span class="string">.</span><span class="comment">029503:</span> <span class="comment">236887</span><span class="string">,</span> <span class="comment">99</span><span class="string">.</span><span class="comment">045153:</span> <span class="comment">73742</span><span class="string">,</span> <span class="comment">109</span><span class="string">.</span><span class="comment">029503:</span> <span class="comment">78094)</span><span class="string">,</span> <span class="comment">171</span><span class="string">.</span><span class="comment">029897:</span> <span class="comment">905226</span><span class="string">,</span> <span class="comment">173</span><span class="string">.</span><span class="comment">045547:</span> <span class="comment">2285841</span> <span class="comment">(71</span><span class="string">.</span><span class="comment">013853:</span> <span class="comment">27805</span><span class="string">,</span> <span class="comment">93</span><span class="string">.</span><span class="comment">034588:</span> <span class="comment">393710</span><span class="string">,</span> <span class="comment">111</span><span class="string">.</span><span class="comment">008768:</span> <span class="comment">26219</span><span class="string">,</span> <span class="comment">111</span><span class="string">.</span><span class="comment">045153:</span> <span class="comment">339595</span><span class="string">,</span> <span class="comment">137</span><span class="string">.</span><span class="comment">024418:</span> <span class="comment">27668</span><span class="string">,</span> <span class="comment">155</span><span class="string">.</span><span class="comment">034982:</span> <span class="comment">145773)</span><span class="string">,</span> <span class="comment">191</span><span class="string">.</span><span class="comment">056112:</span> <span class="comment">17000514)</span><span class="string">,</span> <span class="comment">353</span><span class="string">.</span><span class="comment">087806:</span> <span class="comment">4146696)</span>
+<span class="comment">check:</span>  <span class="comment">False</span>
+<span class="comment">0</span><span class="string">,</span><span class="comment">0</span> <span class="literal">-</span><span class="literal">-</span>&gt; <span class="comment">0</span> <span class="comment">candidates</span>
+<span class="comment">354095081</span><span class="string">,</span><span class="comment">354095083</span> <span class="literal">-</span><span class="literal">-</span>&gt; <span class="comment">3</span> <span class="comment">candidates</span>
+<span class="comment">3978</span> <span class="comment">fragments</span> <span class="comment">in</span> <span class="comment">total</span><span class="string">.</span>
+</code></pre></li></ul></section><h4 id="job-job-settings">Job settings&nbsp;<a href="#page:job,header:job-job-settings"><i class="fa fa-link"></i></a></h4><section id="job-job-settings-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve job settings</span><a href="#page:job,header:job-job-settings-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/results/{jobid}/runinfo.json</code></div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#456516" class="pull-right">Toggle</a></li><li id="456516" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+   "<span class="attribute">success</span>" : <span class="value"><span class="literal">true</span></span>,
+   "<span class="attribute">data</span>" : <span class="value">{
+      "<span class="attribute">ionisation_mode</span>" : <span class="value">-<span class="number">1</span></span>,
+      "<span class="attribute">max_ms_level</span>" : <span class="value"><span class="number">0</span></span>,
+      "<span class="attribute">msms_intensity_cutoff</span>" : <span class="value"><span class="number">0</span></span>,
+      "<span class="attribute">ms_intensity_cutoff</span>" : <span class="value"><span class="number">0</span></span>,
+      "<span class="attribute">precursor_mz_precision</span>" : <span class="value"><span class="number">1e-06</span></span>,
+      "<span class="attribute">max_broken_bonds</span>" : <span class="value"><span class="number">3</span></span>,
+      "<span class="attribute">abs_peak_cutoff</span>" : <span class="value"><span class="number">0</span></span>,
+      "<span class="attribute">ms_data_format</span>" : <span class="value"><span class="string">"mzxml"</span></span>,
+      "<span class="attribute">max_water_losses</span>" : <span class="value"><span class="number">1</span></span>,
+      "<span class="attribute">ms_data_area</span>" : <span class="value"><span class="string">""</span></span>,
+      "<span class="attribute">mz_precision_abs</span>" : <span class="value"><span class="number">0.001</span></span>,
+      "<span class="attribute">mz_precision</span>" : <span class="value"><span class="number">5</span>
+   </span>}
+</span>}
+</code></pre></li></ul></section></div></div><a href="#page:molecules" class="btn btn-default pull-right">Next&nbsp;<i class="fa fa-arrow-circle-right"></i></a><a href="#page:user" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Previous</a><div class="clearfix"></div><hr></div><div data-bind="visible: page() == 'molecules', style: {marginTop: page() == 'molecules' ? '38px' : ''}"><div class="panel panel-default"><div class="panel-heading"><h3 id="molecules">Molecules&nbsp;<a href="#page:molecules"><i class="fa fa-link"></i></a></h3></div><div class="panel-body"><h2 id="filtering">Filtering</h2>
+<p>For sorting the <code>filter</code> url parameter can be used. The <code>filter</code> value is a json encoded array of objects.
+A filter object has the following keys:</p>
+<ul>
+<li>field, valid fields:<ul>
+<li>assigned, use null type filter</li>
+<li>score, use numeric type filter, can only be used when <code>scanid</code> url parameter is set.</li>
+<li>deltappm, use numeric type filter</li>
+<li>reactionsequence, use reaction type filter</li>
+<li>metid, molecule id,  use numeric type filter</li>
+<li>probability, use numeric type filter</li>
+<li>molformula, use string type filter</li>
+<li>isquery, whether molecules was given as query or is a result of a reaction, use boolean type filter</li>
+<li>origin, name of molecule, use string type filter</li>
+<li>nhits, number of ms level 1 scans where fragments of this molecule where found, use numeric type filter</li>
+<li>mim, monoisotopic mass, use numeric type filter</li>
+<li>natoms, number of non-hydrogen atoms, use numeric type filter</li>
+<li>logp, use numeric type filter</li>
+<li>reference, use string type filter</li>
+</ul>
+</li>
+<li>value, the value of the filed to filter on</li>
+<li>type, can be:<ul>
+<li>numeric, filter object also must have <code>comparison</code> key</li>
+<li>string, molecule column contains value. Implemented as a LIKE statement in sql, so % can be used as wildcard.</li>
+<li>boolean, value must be a boolean</li>
+<li>reaction, either <code>product</code> or <code>reaction</code> key must be set. <code>name</code> key is optional.</li>
+<li>null, value must be a boolean. When true the molecule column must be not null</li>
+</ul>
+</li>
+<li>comparison, only used for numeric type filter. Can be <code>eq</code>, <code>gt</code> or <code>lt</code></li>
+<li>product, only used for reaction type filter, molecule identifier of molecule that has selected molecules as reactant</li>
+<li>reactant, only used for reaction type filter, molecule identifier of molecule that has selected molecules as product</li>
+<li>name, only used for reaction type filter, name of reaction, selects molecules which where reactant or product in the given reaction</li>
+</ul>
+<p>Example 1: Molecules which have been found in MS data </p>
+<pre><code class="lang-json">[{"<span class="attribute">type</span>":<span class="value"><span class="string">"numeric"</span></span>,"<span class="attribute">comparison</span>":<span class="value"><span class="string">"gt"</span></span>,"<span class="attribute">value</span>":<span class="value"><span class="number">0</span></span>,"<span class="attribute">field</span>":<span class="value"><span class="string">"nhits"</span></span>}]</code></pre>
+<p>Example 2: Molecules which are products of esterase reaction of molecule with id 1
+[{“reactant”:1,”name”:”esterase”,”type”:”reaction”,”field”:”reactionsequence”}]</p>
+<h2 id="paging">Paging</h2>
+<p>For paging the following url parameters can be used:</p>
+<ul>
+<li>start, the offset</li>
+<li>limit, Maximum nr of molecules to return</li>
+</ul>
+<p>For example <code>?limit=50&amp;start=100</code> will show molecules 100 till 150.</p>
+<h2 id="sorting">Sorting</h2>
+<p>For sorting the <code>sort</code> url parameter can be used. The <code>sort</code> value is a json encoded array of objects with <code>property</code> and <code>direction</code> keys.</p>
+<p>Molecules by default are sorted by:</p>
+<pre><code class="lang-json">        [{"<span class="attribute">property</span>":<span class="value"><span class="string">"probability"</span></span>,"<span class="attribute">direction</span>":<span class="value"><span class="string">"DESC"</span></span>},
+         {"<span class="attribute">property</span>":<span class="value"><span class="string">"metid"</span></span>,"<span class="attribute">direction</span>":<span class="value"><span class="string">"ASC"</span></span>}]</code></pre>
+<p>Valid <code>direction</code> values are ‘DESC’ or ‘ASC’.
+Valid <code>property</code> values are:</p>
+<ul>
+<li>assigned</li>
+<li>score</li>
+<li>deltappm</li>
+<li>metid, molecule id</li>
+<li>probability</li>
+<li>smiles, contains inchikey</li>
+<li>molformula</li>
+<li>isquery, whether molecules was given as query or is a result of a reaction</li>
+<li>origin, name of molecule</li>
+<li>nhits, number of ms level 1 scans where fragments of this molecule where found</li>
+<li>mim, monoisotopic mass</li>
+<li>natoms, number of non-hydrogen atoms</li>
+<li>logp</li>
+<li>reference</li>
+</ul>
+<h4 id="molecules-molecules-as-json">Molecules as json&nbsp;<a href="#page:molecules,header:molecules-molecules-as-json"><i class="fa fa-link"></i></a></h4><section id="molecules-molecules-as-json-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve list of molecules</span><a href="#page:molecules,header:molecules-molecules-as-json-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/results/{jobid}/metabolites.json{?scanid}</code></div><div class="panel-body"><p>Returned fields:</p>
+<ul>
+<li>totalUnfiltered, total unpaged number of molecules without filtering</li>
+<li>total, total unpaged number of molecules with filtering applied</li>
+<li>rows, array of molecules, fields of a molecule:
+<strong> origin, name of molecule derived from input or db lookup
+</strong> smiles, inchi key
+<strong> mol, Molfile of molecule.
+</strong> reactionsequence, list of reactions</li>
+<li>scans, array of scans in which the filtered molecules have fragments </li>
+</ul>
+</div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd><dt>scanid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(number) Filter molecules on having fragments in selected scan.</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#588149" class="pull-right">Toggle</a></li><li id="588149" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+    "<span class="attribute">totalUnfiltered</span>": <span class="value"><span class="number">209</span></span>, 
+    "<span class="attribute">total</span>": <span class="value"><span class="number">209</span></span>, 
+    "<span class="attribute">rows</span>": <span class="value">[{
+        "<span class="attribute">origin</span>": <span class="value"><span class="string">"2-Hydroxymuconic semialdehyde (5280366)"</span></span>, 
+        "<span class="attribute">smiles</span>": <span class="value"><span class="string">"MTOBWJUHQXQURZ"</span></span>, 
+        "<span class="attribute">probability</span>": <span class="value"><span class="literal">null</span></span>, 
+        "<span class="attribute">molformula</span>": <span class="value"><span class="string">"C6H6O4"</span></span>, 
+        "<span class="attribute">assigned</span>": <span class="value"><span class="literal">false</span></span>, 
+        "<span class="attribute">reference</span>": <span class="value"><span class="string">"&lt;a href=\"http://www.genome.jp/dbget-bin/www_bget?cpd:C00682\" target=\"_blank\"&gt;C00682 (Kegg)&lt;/a&gt;"</span></span>, 
+        "<span class="attribute">mol</span>": <span class="value"><span class="string">"5280366\n  -OEChem-08091222412D\n\n 10  9  0     0  0  0  0  0  0999 V2000 ... abbreviated for readability\n"</span></span>, 
+        "<span class="attribute">reactionsequence</span>": <span class="value">{}</span>, 
+        "<span class="attribute">isquery</span>": <span class="value"><span class="literal">true</span></span>, 
+        "<span class="attribute">mim</span>": <span class="value"><span class="number">142.026609</span></span>, 
+        "<span class="attribute">logp</span>": <span class="value"><span class="number">0.2</span></span>, 
+        "<span class="attribute">level</span>": <span class="value"><span class="number">1</span></span>, 
+        "<span class="attribute">metid</span>": <span class="value"><span class="number">2</span></span>, 
+        "<span class="attribute">nhits</span>": <span class="value"><span class="number">1</span>
+    </span>}]</span>,
+    "<span class="attribute">scans</span>": <span class="value">[{
+        "<span class="attribute">rt</span>": <span class="value"><span class="number">2.1296</span></span>, 
+        "<span class="attribute">id</span>": <span class="value"><span class="number">80</span>
+    </span>}]
+</span>}
+</code></pre></li></ul></section><h4 id="molecules-molecules-as-comma-seperated-file">Molecules as comma seperated file&nbsp;<a href="#page:molecules,header:molecules-molecules-as-comma-seperated-file"><i class="fa fa-link"></i></a></h4><section id="molecules-molecules-as-comma-seperated-file-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve list of molecules</span><a href="#page:molecules,header:molecules-molecules-as-comma-seperated-file-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/results/{jobid}/metabolites.csv{?scanid}</code></div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd><dt>scanid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(number) Filter molecules on having fragments in selected scan.</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#544177" class="pull-right">Toggle</a></li><li id="544177" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">text/csv</span><br></code></pre><h5>Body</h5><pre><code>origin,smiles,probability,reactionsequence,nhits,molformula,mim,isquery,logp,reference
+2-Hydroxymuconic semialdehyde (5280366),MTOBWJUHQXQURZ,,{},1,C6H6O4,142.026609,True,0.2,"<span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">""</span><span class="attribute">http:</span>//<span class="attribute">www.genome.jp</span>/<span class="attribute">dbget-bin</span>/<span class="attribute">www_bget</span>?<span class="attribute">cpd:C00682</span>"" <span class="attribute">target</span>=<span class="value">""</span><span class="attribute">_blank</span>""&gt;</span>C00682 (Kegg)<span class="tag">&lt;/<span class="title">a</span>&gt;</span>"
+"cis,cis-muconate (5280518)",TXXHDPDFNKHHGW,,{},1,C6H6O4,142.026609,True,0.2,"<span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">""</span><span class="attribute">http:</span>//<span class="attribute">www.genome.jp</span>/<span class="attribute">dbget-bin</span>/<span class="attribute">www_bget</span>?<span class="attribute">cpd:C02480</span>"" <span class="attribute">target</span>=<span class="value">""</span><span class="attribute">_blank</span>""&gt;</span>C02480 (Kegg)<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;<span class="title">br</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">""</span><span class="attribute">http:</span>//<span class="attribute">www.genome.jp</span>/<span class="attribute">dbget-bin</span>/<span class="attribute">www_bget</span>?<span class="attribute">cpd:C03647</span>"" <span class="attribute">target</span>=<span class="value">""</span><span class="attribute">_blank</span>""&gt;</span>C03647 (Kegg)<span class="tag">&lt;/<span class="title">a</span>&gt;</span>"
+</code></pre></li></ul></section><h4 id="molecules-molecules-as-sdf-file">Molecules as SDF file&nbsp;<a href="#page:molecules,header:molecules-molecules-as-sdf-file"><i class="fa fa-link"></i></a></h4><section id="molecules-molecules-as-sdf-file-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve list of molecules</span><a href="#page:molecules,header:molecules-molecules-as-sdf-file-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/results/{jobid}/metabolites.sdf{?scanid}</code></div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd><dt>scanid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(number) Filter molecules on having fragments in selected scan.</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#801436" class="pull-right">Toggle</a></li><li id="801436" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">chemical/x-mdl-sdfile</span><br></code></pre><h5>Body</h5><pre><code><span class="number">5280366</span>
+  -OEChem-<span class="number">08091222412</span>D
+
+ <span class="number">10</span>  <span class="number">9</span>  <span class="number">0</span>     <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>  <span class="number">0999</span> V2000
+    <span class="number">4.2690</span>    <span class="number">1.2500</span>    <span class="number">0.0000</span> O   <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>
+    <span class="number">2.5369</span>    <span class="number">0.2500</span>    <span class="number">0.0000</span> O   <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>
+    <span class="number">8.5991</span>   -<span class="number">0.2500</span>    <span class="number">0.0000</span> O   <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>
+    <span class="number">3.4030</span>   -<span class="number">1.2500</span>    <span class="number">0.0000</span> O   <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>
+    <span class="number">5.1350</span>   -<span class="number">0.2500</span>    <span class="number">0.0000</span> C   <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>
+    <span class="number">6.0010</span>    <span class="number">0.2500</span>    <span class="number">0.0000</span> C   <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>
+    <span class="number">4.2690</span>    <span class="number">0.2500</span>    <span class="number">0.0000</span> C   <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>
+    <span class="number">6.8671</span>   -<span class="number">0.2500</span>    <span class="number">0.0000</span> C   <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>
+    <span class="number">3.4030</span>   -<span class="number">0.2500</span>    <span class="number">0.0000</span> C   <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>
+    <span class="number">7.7331</span>    <span class="number">0.2500</span>    <span class="number">0.0000</span> C   <span class="number">0</span>  <span class="number">0</span>  <span class="number">0</span>
+  <span class="number">1</span>  <span class="number">7</span>  <span class="number">2</span>  <span class="number">0</span>
+  <span class="number">2</span>  <span class="number">9</span>  <span class="number">1</span>  <span class="number">0</span>
+  <span class="number">3</span> <span class="number">10</span>  <span class="number">1</span>  <span class="number">0</span>
+  <span class="number">4</span>  <span class="number">9</span>  <span class="number">2</span>  <span class="number">0</span>
+  <span class="number">5</span>  <span class="number">6</span>  <span class="number">2</span>  <span class="number">0</span>
+  <span class="number">5</span>  <span class="number">7</span>  <span class="number">1</span>  <span class="number">0</span>
+  <span class="number">6</span>  <span class="number">8</span>  <span class="number">1</span>  <span class="number">0</span>
+  <span class="number">7</span>  <span class="number">9</span>  <span class="number">1</span>  <span class="number">0</span>
+  <span class="number">8</span> <span class="number">10</span>  <span class="number">2</span>  <span class="number">0</span>
+M  END
+&gt; <span class="xml"><span class="tag">&lt;<span class="title">origin</span>&gt;</span>
+2-Hydroxymuconic semialdehyde (5280366)
+
+&gt; <span class="tag">&lt;<span class="title">smiles</span>&gt;</span>
+MTOBWJUHQXQURZ
+
+&gt; <span class="tag">&lt;<span class="title">probability</span>&gt;</span>
+None
+
+&gt; <span class="tag">&lt;<span class="title">reactionsequence</span>&gt;</span>
+{}
+
+&gt; <span class="tag">&lt;<span class="title">nhits</span>&gt;</span>
+1
+
+&gt; <span class="tag">&lt;<span class="title">molformula</span>&gt;</span>
+C6H6O4
+
+&gt; <span class="tag">&lt;<span class="title">mim</span>&gt;</span>
+142.026609
+
+&gt; <span class="tag">&lt;<span class="title">logp</span>&gt;</span>
+0.2
+
+&gt; <span class="tag">&lt;<span class="title">reference</span>&gt;</span>
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"http://www.genome.jp/dbget-bin/www_bget?cpd:C00682"</span> <span class="attribute">target</span>=<span class="value">"_blank"</span>&gt;</span>C00682 (Kegg)<span class="tag">&lt;/<span class="title">a</span>&gt;</span>
+
+$$$$
+</span></code></pre></li></ul></section></div></div><a href="#page:mass-spectra" class="btn btn-default pull-right">Next&nbsp;<i class="fa fa-arrow-circle-right"></i></a><a href="#page:job" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Previous</a><div class="clearfix"></div><hr></div><div data-bind="visible: page() == 'mass-spectra', style: {marginTop: page() == 'mass-spectra' ? '38px' : ''}"><div class="panel panel-default"><div class="panel-heading"><h3 id="mass-spectra">Mass spectra&nbsp;<a href="#page:mass-spectra"><i class="fa fa-link"></i></a></h3></div><div class="panel-body"><h4 id="mass-spectra-chromatogram">Chromatogram&nbsp;<a href="#page:mass-spectra,header:mass-spectra-chromatogram"><i class="fa fa-link"></i></a></h4><section id="mass-spectra-chromatogram-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve chromatogram</span><a href="#page:mass-spectra,header:mass-spectra-chromatogram-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/results/{jobid}/chromatogram.json</code></div><div class="panel-body"><p>Array of ms level 1 scans ordered by retention time.</p>
+<p>Scan fields:</p>
+<ul>
+<li>id, scan identifier</li>
+<li>rt, retention time on which scan was taken</li>
+<li>intensity, highest intensity for current scan</li>
+<li>ap, number of assigned peaks in scan</li>
+</ul>
+</div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#91078" class="pull-right">Toggle</a></li><li id="91078" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+   "<span class="attribute">cutoff</span>" : <span class="value"><span class="number">0</span></span>,
+   "<span class="attribute">scans</span>" : <span class="value">[
+      {
+         "<span class="attribute">ap</span>" : <span class="value"><span class="number">0</span></span>,
+         "<span class="attribute">rt</span>" : <span class="value"><span class="number">0.013115</span></span>,
+         "<span class="attribute">id</span>" : <span class="value"><span class="number">1</span></span>,
+         "<span class="attribute">intensity</span>" : <span class="value"><span class="number">14556.6</span>
+      </span>},
+      {
+         "<span class="attribute">rt</span>" : <span class="value"><span class="number">0.0278533333333333</span></span>,
+         "<span class="attribute">intensity</span>" : <span class="value"><span class="number">14144.9</span></span>,
+         "<span class="attribute">id</span>" : <span class="value"><span class="number">2</span></span>,
+         "<span class="attribute">ap</span>" : <span class="value"><span class="number">0</span>
+      </span>},
+      {
+         "<span class="attribute">rt</span>" : <span class="value"><span class="number">0.0636</span></span>,
+         "<span class="attribute">id</span>" : <span class="value"><span class="number">3</span></span>,
+         "<span class="attribute">intensity</span>" : <span class="value"><span class="number">13740.4</span></span>,
+         "<span class="attribute">ap</span>" : <span class="value"><span class="number">0</span>
+      </span>},
+      {
+         "<span class="attribute">id</span>" : <span class="value"><span class="number">3882</span></span>,
+         "<span class="attribute">intensity</span>" : <span class="value"><span class="number">476049</span></span>,
+         "<span class="attribute">rt</span>" : <span class="value"><span class="number">94.9393333333333</span></span>,
+         "<span class="attribute">ap</span>" : <span class="value"><span class="number">0</span>
+      </span>}
+   ]
+</span>}
+</code></pre></li></ul></section><h4 id="mass-spectra-mass-spectra-scan">Mass spectra scan&nbsp;<a href="#page:mass-spectra,header:mass-spectra-mass-spectra-scan"><i class="fa fa-link"></i></a></h4><section id="mass-spectra-mass-spectra-scan-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve peaks of a mass spectra scan</span><a href="#page:mass-spectra,header:mass-spectra-mass-spectra-scan-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/results/{jobid}/mspectra/{scanid}.json{?mslevel}</code></div><div class="panel-body"><p>Response of a scan on ms level 2:</p>
+<pre><code class="lang-json">        {
+           &quot;mslevel&quot; : 2,
+           &quot;cutoff&quot; : 917380,
+           &quot;peaks&quot; : [
+              {
+                 &quot;intensity&quot; : 9429.9736328125,
+                 &quot;mz&quot; : 131.485321044922,
+                 &quot;assigned_metid&quot; : null
+              },
+              {
+                 &quot;intensity&quot; : 5026.97900390625,
+                 &quot;assigned_metid&quot; : null,
+                 &quot;mz&quot; : 131.522369384766
+              }
+           ],
+           &quot;precursor&quot; : {
+              &quot;mz&quot; : 479.2140198,
+              &quot;id&quot; : 2419
+           }
+        }
+`</code></pre>
+<p>Response of a scan on ms level 1:</p>
+</div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd><dt>scanid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(number) Scan identifier</p>
+</dd><dt>mslevel</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(optional, number) Level of spectra. First level is 1.</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#686579" class="pull-right">Toggle</a></li><li id="686579" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+   "<span class="attribute">mslevel</span>" : <span class="value"><span class="number">1</span></span>,
+   "<span class="attribute">peaks</span>" : <span class="value">[
+      {
+         "<span class="attribute">intensity</span>" : <span class="value"><span class="number">6326.3271484375</span></span>,
+         "<span class="attribute">mz</span>" : <span class="value"><span class="number">96.9602890014648</span></span>,
+         "<span class="attribute">assigned_metid</span>" : <span class="value"><span class="literal">null</span>
+      </span>},
+      {
+         "<span class="attribute">intensity</span>" : <span class="value"><span class="number">17530.162109375</span></span>,
+         "<span class="attribute">mz</span>" : <span class="value"><span class="number">112.985801696777</span></span>,
+         "<span class="attribute">assigned_metid</span>" : <span class="value"><span class="literal">null</span>
+      </span>}
+   ]</span>,
+   "<span class="attribute">precursor</span>" : <span class="value">{
+      "<span class="attribute">mz</span>" : <span class="value"><span class="literal">null</span></span>,
+      "<span class="attribute">id</span>" : <span class="value"><span class="number">0</span>
+   </span>}</span>,
+   "<span class="attribute">cutoff</span>" : <span class="value"><span class="number">0</span>
+</span>}
+</code></pre></li></ul></section><h4 id="mass-spectra-extracted-ion-chromatogram">Extracted ion chromatogram&nbsp;<a href="#page:mass-spectra,header:mass-spectra-extracted-ion-chromatogram"><i class="fa fa-link"></i></a></h4><p>Returns intensities in all ms level 1 scans of the selected molecule.</p>
+<section id="mass-spectra-extracted-ion-chromatogram-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve extracted ion chromatogram</span><a href="#page:mass-spectra,header:mass-spectra-extracted-ion-chromatogram-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/results/{jobid}/extractedionchromatogram/{metid}.json</code></div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd><dt>metid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(number) Molecule identifier</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#856119" class="pull-right">Toggle</a></li><li id="856119" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+   "<span class="attribute">chromatogram</span>" : <span class="value">[
+      {
+         "<span class="attribute">rt</span>" : <span class="value"><span class="number">0.013115</span></span>,
+         "<span class="attribute">intensity</span>" : <span class="value"><span class="number">0</span>
+      </span>},
+      {
+         "<span class="attribute">rt</span>" : <span class="value"><span class="number">8.39626666666667</span></span>,
+         "<span class="attribute">intensity</span>" : <span class="value"><span class="number">282228.875</span>
+      </span>}
+   ]</span>,
+   "<span class="attribute">scans</span>" : <span class="value">[
+      {
+         "<span class="attribute">id</span>" : <span class="value"><span class="number">329</span></span>,
+         "<span class="attribute">rt</span>" : <span class="value"><span class="number">8.04626666666667</span>
+      </span>},
+      {
+         "<span class="attribute">id</span>" : <span class="value"><span class="number">343</span></span>,
+         "<span class="attribute">rt</span>" : <span class="value"><span class="number">8.39626666666667</span>
+      </span>}
+   ]
+</span>}
+</code></pre></li></ul></section></div></div><a href="#page:fragments" class="btn btn-default pull-right">Next&nbsp;<i class="fa fa-arrow-circle-right"></i></a><a href="#page:molecules" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Previous</a><div class="clearfix"></div><hr></div><div data-bind="visible: page() == 'fragments', style: {marginTop: page() == 'fragments' ? '38px' : ''}"><div class="panel panel-default"><div class="panel-heading"><h3 id="fragments">Fragments&nbsp;<a href="#page:fragments"><i class="fa fa-link"></i></a></h3></div><div class="panel-body"><h4 id="fragments-fragments">Fragments&nbsp;<a href="#page:fragments,header:fragments-fragments"><i class="fa fa-link"></i></a></h4><section id="fragments-fragments-get" class="panel panel-info"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Retrieve list of fragments</span><a href="#page:fragments,header:fragments-fragments-get" class="btn btn-xs btn-primary">GET</a>&nbsp;<code>/results/{jobid}/fragments/{scanid}/{metid}.json</code></div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd><dt>scanid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(number) Scan identifier</p>
+</dd><dt>metid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(number) Molecule identifier</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#784000" class="pull-right">Toggle</a></li><li id="784000" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code><span class="special">{</span>
+   "expanded" : true,
+   "children" : <span class="special">[</span>
+      <span class="special">{</span>
+         "leaf" : false,
+         "scanid" : 1,
+         "deltah" : -1.0078250321,
+         "score" : 1.77586696289526,
+         "mass" : 354.0950821767,
+         "formula" : "C16H18O9&lt;br&gt;<span class="special">[</span>M-H<span class="special">]</span>-",
+         "isAssigned" : false,
+         "mz" : 353.087494,
+         "mslevel" : 1,
+         "mol" : "Chlorogenic<span class="command">\n</span>     RDKit          2D<span class="command">\n</span><span class="command">\n</span> 25 26  0  0  0  0  0  0  0  0999 V2000<span class="command">\n</span>   -2.4601   -2.4528    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -3.9368   -2.1899    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -4.9029   -3.3373    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -4.4475   -0.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -5.7478   -1.5273    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -5.4098    0.3712    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -4.8944    1.7799    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -5.8566    2.9305    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -3.4167    2.0379    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -2.9013    3.4465    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -2.4545    0.8872    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -0.9768    1.1452    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -0.0146   -0.0055    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -0.5300   -1.4142    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    1.4631    0.2525    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    2.4253   -0.8982    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    3.9030   -0.6402    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    4.8652   -1.7909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    6.3429   -1.5329    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    6.8583   -0.1242    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    8.3359    0.1338    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    5.8960    1.0264    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    6.4114    2.4351    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    4.4184    0.7685    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -2.9699   -0.5215    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>  1  2  2  0<span class="command">\n</span>  2  3  1  0<span class="command">\n</span>  4  2  1  6<span class="command">\n</span>  4  5  1  0<span class="command">\n</span>  4  6  1  0<span class="command">\n</span>  6  7  1  0<span class="command">\n</span>  7  8  1  1<span class="command">\n</span>  7  9  1  0<span class="command">\n</span>  9 10  1  1<span class="command">\n</span>  9 11  1  0<span class="command">\n</span> 11 12  1  6<span class="command">\n</span> 12 13  1  0<span class="command">\n</span> 13 14  2  0<span class="command">\n</span> 13 15  1  0<span class="command">\n</span> 15 16  2  0<span class="command">\n</span> 16 17  1  0<span class="command">\n</span> 17 18  2  0<span class="command">\n</span> 18 19  1  0<span class="command">\n</span> 19 20  2  0<span class="command">\n</span> 20 21  1  0<span class="command">\n</span> 20 22  1  0<span class="command">\n</span> 22 23  1  0<span class="command">\n</span> 22 24  2  0<span class="command">\n</span> 11 25  1  0<span class="command">\n</span> 24 17  1  0<span class="command">\n</span> 25  4  1  0<span class="command">\nM</span>  END<span class="command">\n</span>",
+         "metid" : 1,
+         "children" : <span class="special">[</span>
+            <span class="special">{</span>
+               "metid" : 1,
+               "atoms" : ",0,1,2,3,4,5,6,7,8,9,10,11,24",
+               "mslevel" : 2,
+               "expanded" : false,
+               "mol" : "Chlorogenic<span class="command">\n</span>     RDKit          2D<span class="command">\n</span><span class="command">\n</span> 25 26  0  0  0  0  0  0  0  0999 V2000<span class="command">\n</span>   -2.4601   -2.4528    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -3.9368   -2.1899    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -4.9029   -3.3373    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -4.4475   -0.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -5.7478   -1.5273    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -5.4098    0.3712    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -4.8944    1.7799    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -5.8566    2.9305    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -3.4167    2.0379    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -2.9013    3.4465    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -2.4545    0.8872    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -0.9768    1.1452    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -0.0146   -0.0055    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -0.5300   -1.4142    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    1.4631    0.2525    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    2.4253   -0.8982    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    3.9030   -0.6402    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    4.8652   -1.7909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    6.3429   -1.5329    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    6.8583   -0.1242    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    8.3359    0.1338    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    5.8960    1.0264    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    6.4114    2.4351    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    4.4184    0.7685    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -2.9699   -0.5215    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>  1  2  2  0<span class="command">\n</span>  2  3  1  0<span class="command">\n</span>  4  2  1  6<span class="command">\n</span>  4  5  1  0<span class="command">\n</span>  4  6  1  0<span class="command">\n</span>  6  7  1  0<span class="command">\n</span>  7  8  1  1<span class="command">\n</span>  7  9  1  0<span class="command">\n</span>  9 10  1  1<span class="command">\n</span>  9 11  1  0<span class="command">\n</span> 11 12  1  6<span class="command">\n</span> 12 13  1  0<span class="command">\n</span> 13 14  2  0<span class="command">\n</span> 13 15  1  0<span class="command">\n</span> 15 16  2  0<span class="command">\n</span> 16 17  1  0<span class="command">\n</span> 17 18  2  0<span class="command">\n</span> 18 19  1  0<span class="command">\n</span> 19 20  2  0<span class="command">\n</span> 20 21  1  0<span class="command">\n</span> 20 22  1  0<span class="command">\n</span> 22 23  1  0<span class="command">\n</span> 22 24  2  0<span class="command">\n</span> 11 25  1  0<span class="command">\n</span> 24 17  1  0<span class="command">\n</span> 25  4  1  0<span class="command">\nM</span>  END<span class="command">\n</span>",
+               "mz" : 191.055756,
+               "fragid" : 2,
+               "deltappm" : -1.8616853395642,
+               "scanid" : 2,
+               "deltah" : 0,
+               "leaf" : false,
+               "formula" : "C7H11O6&lt;br&gt;<span class="special">[</span>X<span class="special">]</span>-",
+               "mass" : 191.0555630857,
+               "score" : 2.51612316121282
+            <span class="special">}</span>,
+            <span class="special">{</span>
+               "fragid" : 28,
+               "deltappm" : -2.00727980703101,
+               "mslevel" : 2,
+               "mol" : "Chlorogenic<span class="command">\n</span>     RDKit          2D<span class="command">\n</span><span class="command">\n</span> 25 26  0  0  0  0  0  0  0  0999 V2000<span class="command">\n</span>   -2.4601   -2.4528    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -3.9368   -2.1899    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -4.9029   -3.3373    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -4.4475   -0.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -5.7478   -1.5273    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -5.4098    0.3712    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -4.8944    1.7799    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -5.8566    2.9305    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -3.4167    2.0379    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -2.9013    3.4465    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -2.4545    0.8872    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -0.9768    1.1452    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -0.0146   -0.0055    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -0.5300   -1.4142    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    1.4631    0.2525    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    2.4253   -0.8982    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    3.9030   -0.6402    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    4.8652   -1.7909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    6.3429   -1.5329    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    6.8583   -0.1242    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    8.3359    0.1338    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    5.8960    1.0264    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    6.4114    2.4351    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>    4.4184    0.7685    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>   -2.9699   -0.5215    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0<span class="command">\n</span>  1  2  2  0<span class="command">\n</span>  2  3  1  0<span class="command">\n</span>  4  2  1  6<span class="command">\n</span>  4  5  1  0<span class="command">\n</span>  4  6  1  0<span class="command">\n</span>  6  7  1  0<span class="command">\n</span>  7  8  1  1<span class="command">\n</span>  7  9  1  0<span class="command">\n</span>  9 10  1  1<span class="command">\n</span>  9 11  1  0<span class="command">\n</span> 11 12  1  6<span class="command">\n</span> 12 13  1  0<span class="command">\n</span> 13 14  2  0<span class="command">\n</span> 13 15  1  0<span class="command">\n</span> 15 16  2  0<span class="command">\n</span> 16 17  1  0<span class="command">\n</span> 17 18  2  0<span class="command">\n</span> 18 19  1  0<span class="command">\n</span> 19 20  2  0<span class="command">\n</span> 20 21  1  0<span class="command">\n</span> 20 22  1  0<span class="command">\n</span> 22 23  1  0<span class="command">\n</span> 22 24  2  0<span class="command">\n</span> 11 25  1  0<span class="command">\n</span> 24 17  1  0<span class="command">\n</span> 25  4  1  0<span class="command">\nM</span>  END<span class="command">\n</span>",
+               "expanded" : true,
+               "atoms" : ",0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+               "mz" : 353.087097,
+               "metid" : 1,
+               "score" : 0,
+               "mass" : 354.0950821767,
+               "formula" : "C16H18O9&lt;br&gt;<span class="special">[</span>X-H<span class="special">]</span>-",
+               "deltah" : -1.0078250321,
+               "scanid" : 2,
+               "leaf" : true
+            <span class="special">}</span>
+         <span class="special">]</span>,
+         "atoms" : ",0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+         "expanded" : true,
+         "deltappm" : -0.882910341670981,
+         "fragid" : 1
+      <span class="special">}</span>
+   <span class="special">]</span>
+<span class="special">}</span>
+</code></pre></li></ul></section><h4 id="fragments-assign-molecule-to-peak">Assign molecule to peak&nbsp;<a href="#page:fragments,header:fragments-assign-molecule-to-peak"><i class="fa fa-link"></i></a></h4><section id="fragments-assign-molecule-to-peak-post" class="panel panel-success"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Assign molecule to peak</span><a href="#page:fragments,header:fragments-assign-molecule-to-peak-post" class="btn btn-xs btn-success">POST</a>&nbsp;<code>/rpc/{jobid}/assign</code></div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Request</strong><a data-toggle="collapse" data-target="#691501" class="pull-right">Toggle</a></li><li id="691501" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/x-www-form-urlencoded; charset=UTF-8</span><br></code></pre><h5>Body</h5><pre><code><span class="title">scanid</span>=<span class="number">1</span>&amp;
+<span class="title">metid</span>=<span class="number">1</span>&amp;
+<span class="title">mz</span>=<span class="number">353.087494</span>
+</code></pre></li><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#900300" class="pull-right">Toggle</a></li><li id="900300" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+    "<span class="attribute">success</span>": <span class="value"><span class="literal">true</span></span>, 
+    "<span class="attribute">jobid</span>": <span class="value"><span class="string">"aa939da6-bec1-4c82-8df5-df48391e534b"</span>
+</span>}
+</code></pre></li></ul></section><h4 id="fragments-unassign-molecules-from-peak">Unassign molecules from peak&nbsp;<a href="#page:fragments,header:fragments-unassign-molecules-from-peak"><i class="fa fa-link"></i></a></h4><section id="fragments-unassign-molecules-from-peak-post" class="panel panel-success"><div class="panel-heading"><span style="text-transform: lowercase" class="pull-right">Unassign any molecules from peak</span><a href="#page:fragments,header:fragments-unassign-molecules-from-peak-post" class="btn btn-xs btn-success">POST</a>&nbsp;<code>/rpc/{jobid}/unassign</code></div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>jobid</dt><dd><code></code>&nbsp;<span class="required">(required)</span>&nbsp;<p>(string) Job identifier</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Request</strong><a data-toggle="collapse" data-target="#259253" class="pull-right">Toggle</a></li><li id="259253" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/x-www-form-urlencoded; charset=UTF-8</span><br></code></pre><h5>Body</h5><pre><code><span class="title">scanid</span>=<span class="number">1</span>&amp;
+<span class="title">mz</span>=<span class="number">353.087494</span>
+</code></pre></li><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#451546" class="pull-right">Toggle</a></li><li id="451546" class="list-group-item collapse"><h5>Headers</h5><pre><code><span class="attribute">Content-Type</span>: <span class="string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
+    "<span class="attribute">success</span>": <span class="value"><span class="literal">true</span></span>, 
+    "<span class="attribute">jobid</span>": <span class="value"><span class="string">"aa939da6-bec1-4c82-8df5-df48391e534b"</span>
+</span>}
+</code></pre></li></ul></section></div></div><a href="#page:mass-spectra" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Previous</a><div class="clearfix"></div><hr></div></div></div></div><p style="text-align: center;" class="text-muted">Generated by <a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a> on 29 Jul 2014</p><div id="localFile" style="display: none; position: absolute; top: 0; left: 0; width: 100%; color: white; background: red; font-size: 150%; text-align: center; padding: 1em;">This page may not display correctly when opened as a local file. Instead, view it from a web server.
+
+</div></body><script src="//code.jquery.com/jquery-1.10.1.min.js"></script><script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script><script type="text/javascript">
+(function() {
+  if (location.protocol === 'file:') {
+    document.getElementById('localFile').style.display = 'block';
+  }
+
+}).call(this);
+</script><script type="text/javascript">
+(function() {
+  $('table').addClass('table');
+
+}).call(this);
+</script><script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-min.js"></script><script type="text/javascript">
+(function() {
+  var App;
+
+  App = (function() {
+    function App() {
+      this.page = ko.observable('home');
+    }
+
+    return App;
+
+  })();
+
+  window.app = new App();
+
+  window.onhashchange = function() {
+    var parts, v, vars, _i, _len, _ref;
+    vars = {};
+    _ref = location.hash.substr(1).split(',');
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      v = _ref[_i];
+      parts = v.split(':');
+      vars[parts[0]] = parts[1];
+    }
+    window.app.page(vars.page || 'home');
+    if (vars.header) {
+      return $("#" + vars.header)[0].scrollIntoView(true);
+    } else {
+      return window.scrollTo(0, 0);
+    }
+  };
+
+  ko.applyBindings(window.app);
+
+  window.onhashchange();
+
+}).call(this);
+</script></html>
