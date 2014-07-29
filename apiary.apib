@@ -1,47 +1,834 @@
 FORMAT: 1A
-HOST: http://www.google.com
+HOST: http://www.emetabolomics.org/magma/
 
 # MAGMa
-Notes API is a *short texts saving* service similar to its physical paper presence on your table.
+MAGMa is an online application for the automatic chemical annotation of accurate multistage MSn spectral data.
 
-# Group Notes
-Notes related resources of the **Notes API**
+* MSn data can be uploaded as a hierarchical tree of fragment peaks, either based on m/z values or elemental formulas, or as an mzXML file of the raw data.
+* Candidate molecules are automatically retrieved from PubChem, from a subset of PubChem compounds present in Kegg, or from the Human Metabolome Database.
+* Candidate molecules can be predicted based on in silico reaction rules describing microbiotic and human biotransformations
+* For each candidate molecule, substructures are generated and matched with the observed fragment peaks.
+* The web browser enables efficient mining of the automatically annotated data.
 
-## Notes Collection [/notes]
-### List all Notes [GET]
-+ Response 200 (application/json)
+# Authentication
 
-        [{
-          "id": 1, "title": "Jogging in park"
-        }, {
-          "id": 2, "title": "Pick-up posters from post-office"
-        }]
+MAGMa supports cookie based authentication method. Login will set cookie and this cookie can be used to access the application.
 
-### Create a Note [POST]
-+ Request (application/json)
+MAGMa runs in 2 modes:
 
-        { "title": "Buy cheese and bread for breakfast." }
+1. http://www.emetabolomics.org/magma/, anonymous access, visiting [/login] will give a authentication cookie that can be used for other requests.
+2. https://www.emetabolomics.org/magma/, must login, allows bigger jobs to run. Access must be requested at Lars.Ridder@wur.nl
 
-+ Response 201 (application/json)
+# Group User
 
-        { "id": 3, "title": "Buy cheese and bread for breakfast." }
+## Login [/login]
 
-## Note [/notes/{id}]
-A single Note object with all its details
+### Get anonymous token [GET]
+Used to get an anonymous authentication cookie when accessing http://www.emetabolomics.org/magma/ 
 
-+ Parameters
-    + id (required, number, `1`) ... Numeric `id` of the Note to perform action with. Has example value.
-
-### Retrieve a Note [GET]
-+ Response 200 (application/json)
++ Response 302 (text/html)
 
     + Header
 
-            X-My-Header: The Value
+            Location: http://www.emetabolomics.org/magma/
+            Set-Cookie: magma="4f300ccfd854edddccf4e6e8604e2c616e4a121fa77a4d8f5adbd68202369caffdb6a5d89c1aba6e2acf64ba8f4e55ff7ad615bc96420450a207d9ba8a2e05a753d76527M2Y3ZGE3YjMtZTNmYS00MTA4LWI4ODUtM2MzNjVjMzkyYTk1!userid_type:b64unicode"; Path=/magma; Domain=www.emetabolomics.org; HttpOnly
+    
+    + Body
+
+            Redirect to home page
+
+### Login to application [POST]
+Used when accessing https://www.emetabolomics.org/magma/
+
++ Request (application/x-www-form-urlencoded; charset=UTF-8)
+
+        userid=myusername&
+        password=mypassword
+
++ Response 302 (text/html)
+
+    + Header
+
+            Location: https://www.emetabolomics.org/magma/
+            Set-Cookie: magma="4f300ccfd854edddccf4e6e8604e2c616e4a121fa77a4d8f5adbd68202369caffdb6a5d89c1aba6e2acf64ba8f4e55ff7ad615bc96420450a207d9ba8a2e05a753d76527M2Y3ZGE3YjMtZTNmYS00MTA4LWI4ODUtM2MzNjVjMzkyYTk1!userid_type:b64unicode"; Path=/magma; Domain=www.emetabolomics.org; HttpOnly
+    
+    + Body
+
+            Redirect to home page
+
+## Logout [/logout]
+
+### Logout [GET]
+
++ Response 302 (text/html)
+
+    + Header
+
+            Location: https://www.emetabolomics.org/magma/
+            Set-Cookie: magma=""; Path=/magma; Domain=www.emetabolomics.org; Max-Age=0; Expires=Wed, 31-Dec-97 23:59:59 GMT; HttpOnly
 
     + Body
 
-            { "id": 2, "title": "Pick-up posters from post-office" }
+            Redirect to home page
 
-### Remove a Note [DELETE]
-+ Response 204
+
+# Group Job
+A job is submitted, polled for it's status and when complete results can be retrieved.
+
+## Defaults [/defaults.json]
+
+### Retrieve defaults [GET]
+Returns defaults settings to run a job.
+
++ Response 200 (application/json)
+
+        {
+           "success" : true,
+           "data" : {
+              "mz_precision" : 5,
+              "precursor_mz_precision" : 0.005,
+              "ionisation_mode" : 1,
+              "max_water_losses" : 1,
+              "max_broken_bonds" : 3,
+              "mz_precision_abs" : 0.001,
+              "ms_intensity_cutoff" : 0,
+              "ms_data_area" : "",
+              "msms_intensity_cutoff" : 5,
+              "abs_peak_cutoff" : 5000,
+              "max_ms_level" : 10,
+              "ms_data_format" : "mzxml",
+              "scenario" : [
+                 {
+                    "steps" : "2",
+                    "type" : "phase1"
+                 },
+                 {
+                    "type" : "phase2",
+                    "steps" : "1"
+                 }
+              ]
+           }
+        }
+
+## Submit a job [/start]
+
+A job is submitted by submitting a job query. 
+A job query is divided into 3 sections:
+
+### 1. MS Data
+
+Form fields:
+
+* ms_data_format, can be mzxml, mass_tree or form_tree. See http://www.emetabolomics.org/magma/help for information on the different formats
+* ms_data, ms data as a string
+* ms_data_file, ms data as a file upload
+* max_ms_level, Maximum depth of scan which will be stored
+* abs_peak_cutoff, Absolute intensity threshold for storing peaks in database
+* scan, Read only spectral tree specified by MS1 scan number
+
+### 2. Molecules
+
+Form fields:
+
+
+* structure_format, Can be 'smiles' or 'sdf'. See http://www.emetabolomics.org/magma/help for information on the different formats
+* structures, structures as string
+* structures_file, structures as file
+* structure_database, Chemical structure database, can be pubchem, kegg or hmdb. When set structures and structures_file will be ignored.
+* max_mz, Mass limit for retrieving candidate molecules, only used when strucuture_database is set
+* min_refscore, Minimum number of related PubChem substances, only used when strucuture_database is set
+* excl_halo, Exclude halogenated compounds, only used when strucuture_database is set
+
+#### Metabolize
+When molecule is uploaded or drawn then they can be metabolized.
+
+Form fields:
+* metabolize, Can be true==1 or false==0
+* scenario, json array of object with type and steps keys. 
+
+Scenario type can be 'phase1', 'phase1_selected', 'phase2', 'phase2_selected', 'glycosidase','mass_filter', 'gut'. 
+Scenario steps is the number of times transformation is performed.
+
+Example scenario:
+````json
+[{"type": "phase1", "steps": 2}, {"type": "phase2", "steps": 1]
+````
+
+### 3. Parameter settings
+
+Form fields:
+
+* ionisation_mode, Can be -1 or 1
+* max_broken_bonds, Maximum number of bond breaks to generate substructures
+* max_water_losses, Maximum number of additional water (OH) and/or ammonia (NH2) losses
+* mz_precision, Maximum relative m/z error (ppm)
+* mz_precision_abs, Maximum absolute m/z error (Da)
+* precursor_mz_precision, Maximum absolute error of precursor m/z values
+* ms_intensity_cutoff, Minimum intensity of MS1 precursor ion peaks to be annotated
+* msms_intensity_cutoff, Minimum intensity of fragment peaks to be annotated, as percentage of basepeak
+
+### Submit a job [POST]
+
++ Request (multipart/form-data;boundary=------WebKitFormBoundary5kf6zWR9Aa98bbli)
+
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="ms_data_format"
+        
+        mass_tree
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="ms_data"
+        
+        353.087494: 69989984 (
+            191.055756: 54674544 (
+                85.029587: 2596121,
+                93.034615: 1720164,
+                109.029442: 917026,
+                111.045067: 1104891 (
+                    81.034691: 28070,
+                    83.014069: 7618,
+                    83.050339: 25471,
+                    93.034599: 36300,
+                    96.021790: 8453
+                    ),
+                127.039917: 2890439 (
+                    57.034718: 16911,
+                    81.034706: 41459,
+                    83.050301: 35131,
+                    85.029533: 236887,
+                    99.045074: 73742,
+                    109.029404: 78094
+                    ),
+                171.029587: 905226,
+                173.045212: 2285841 (
+                    71.013992: 27805,
+                    93.034569: 393710,
+                    111.008629: 26219,
+                    111.045029: 339595,
+                    137.024292: 27668,
+                    155.034653: 145773
+                    ),
+                191.055725: 17000514
+                ),
+            353.087097: 4146696
+            )
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="structure_database"
+        
+        pubchem
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="max_mz"
+        
+        1200
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="min_refscore"
+        
+        1
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="excl_halo"
+        
+        on
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="structure_format"
+        
+        smiles
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="structures"
+        
+        
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="scenario"
+        
+        [{"type":"phase1","steps":"2"},{"type":"phase2","steps":"1"}]
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="ionisation_mode"
+        
+        -1
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="max_broken_bonds"
+        
+        3
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="max_water_losses"
+        
+        1
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="mz_precision"
+        
+        5
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="mz_precision_abs"
+        
+        0.001
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli
+        Content-Disposition: form-data; name="ms_data_file"; filename=""
+        Content-Type: application/octet-stream
+        
+        
+        ------WebKitFormBoundary5kf6zWR9Aa98bbli--
+
++ Response 200 (application/json)
+
+        {
+            "success": true,
+            "jobid": "b1eee101-dcc6-435e-baa8-d35e688c408e"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "success": false,
+            "msg": "Unable to submit query"
+        }
+
+## Job status [/status/{jobid}.json]
+
++ Parameters
+    + jobid ... (string) Job identifier
+
+### Retrieve job status [GET]
+
+When `is_complete` is "false" then the status must be retrieved again after waiting a period. 
+When `is_complete` is "true" and `status` is "STOPPED" then results of the job can be retrieved.
+
++ Response 200 (application/json)
+
+        {
+            "status": "STOPPED",
+            "is_complete": true,
+            "jobid": "b1eee101-dcc6-435e-baa8-d35e688c408e"
+        }
+
+## Single result [/results/{jobid}]
+
++ Parameters
+    + jobid ... (string) Job identifier
+
+### Delete a job [DELETE]
+
++ Response 200 (application/json)
+
+        {
+            "success": true,
+            "message": "Deleted job"
+        }
+
++ Response 500 (application/json)
+
+        {
+            "success": true,
+            "msg": "Failed to cancel job"
+        }
+
+### Update a job [PUT]
+
++ Request (application/json)
+
+        {
+            "description": "New job description",
+            "ms_filename": "New Mass spectra file name",
+            "is_public": false
+        }
+
++ Response 200 (application/json)
+
+        {
+            "success": true,
+            "message": "Updated job"
+        }
+
+## Stderr log [/results/{jobid}/stderr.txt]
+Used for debugging.
+
++ Parameters
+    + jobid ... (string) Job identifier
+
+### Retrieve stderr log [GET]
+
++ Response 200 (text/plain)
+
+        WARNING:root:Build spectra
+        WARNING:root:Searching structures
+        WARNING:root:calculating on 1 cpus !!!
+        Metabolite 1 -> 1573 fragments: CHLOROGENIC ACID (1794427)
+        Scan: 1 - Mz: 353.087805745 - Score: 62790.1532877
+        Metabolite 2 -> 1078 fragments: Scopolin (439514)
+        Scan: 1 - Mz: 353.087805745 - Score: 221988.051709
+        Metabolite 3 -> 1327 fragments: Biflorin (441959)
+        Scan: 1 - Mz: 353.087805745 - Score: 249551.191514
+
+## Stdout log [/results/{jobid}/stdout.txt]
+Used for debugging.
+
++ Parameters
+    + jobid ... (string) Job identifier
+
+### Retrieve stdout log [GET]
+
++ Response 200 (text/plain)
+
+        353.087806: 69989984 (191.056112: 54674544 (85.029503: 2596121, 93.034588: 1720164, 109.029503: 917026, 111.045153: 1104891 (81.034588: 28070, 83.013853: 7618, 83.050238: 25471, 93.034588: 36300, 96.021678: 8453), 127.040068: 2890439 (57.034588: 16911, 81.034588: 41459, 83.050238: 35131, 85.029503: 236887, 99.045153: 73742, 109.029503: 78094), 171.029897: 905226, 173.045547: 2285841 (71.013853: 27805, 93.034588: 393710, 111.008768: 26219, 111.045153: 339595, 137.024418: 27668, 155.034982: 145773), 191.056112: 17000514), 353.087806: 4146696)
+        check:  False
+        0,0 --> 0 candidates
+        354095081,354095083 --> 3 candidates
+        3978 fragments in total.
+
+## Job settings [/results/{jobid}/runinfo.json]
+
++ Parameters
+    + jobid ... (string) Job identifier
+
+### Retrieve job settings [GET]
+
++ Response 200 (application/json)
+
+        {
+           "success" : true,
+           "data" : {
+              "ionisation_mode" : -1,
+              "max_ms_level" : 0,
+              "msms_intensity_cutoff" : 0,
+              "ms_intensity_cutoff" : 0,
+              "precursor_mz_precision" : 1e-06,
+              "max_broken_bonds" : 3,
+              "abs_peak_cutoff" : 0,
+              "ms_data_format" : "mzxml",
+              "max_water_losses" : 1,
+              "ms_data_area" : "",
+              "mz_precision_abs" : 0.001,
+              "mz_precision" : 5
+           }
+        }
+
+# Group Molecules
+
+## Filtering
+
+For sorting the `filter` url parameter can be used. The `filter` value is a json encoded array of objects.
+A filter object has the following keys:
+
+* field, valid fields:
+    * assigned, use null type filter
+    * score, use numeric type filter, can only be used when `scanid` url parameter is set.
+    * deltappm, use numeric type filter
+    * reaction,
+    * metid, molecule id,  use numeric type filter
+    * probability, use numeric type filter
+    * molformula, use string type filter
+    * isquery, whether molecules was given as query or is a result of a reaction, use boolean type filter
+    * origin, name of molecule, use string type filter
+    * nhits, number of ms level 1 scans where fragments of this molecule where found, use numeric type filter
+    * mim, monoisotopic mass, use numeric type filter
+    * natoms, number of non-hydrogen atoms, use numeric type filter
+    * logp, use numeric type filter
+    * reference, use string type filter
+* value, the value of the filed to filter on
+* type, can be:
+    * numeric, filter object also must have `comparison` key
+    * string, molecule column contains value. Implemented as a LIKE statement in sql, so % can be used as wildcard.
+    * boolean, value must be a boolean
+    * reaction, either `product` or `reaction` key must be set. `name` key is optional.
+    * null, value must be a boolean. When true the molecule column must be not null
+* comparison, only used for numeric type filter. Can be `eq`, `gt` or `lt`
+* product, only used for reaction type filter, molecule identifier of molecule that has selected molecules as reactant
+* reactant, only used for reaction type filter, molecule identifier of molecule that has selected molecules as product
+* name, only used for reaction type filter, name of reaction, selects molecules which where reactant or product in the given reaction
+
+## Paging
+
+For paging the following url parameters can be used:
+
+* start, the offset
+* limit, Maximum nr of molecules to return
+
+For example `?limit=50&start=100` will show molecules 100 till 150.
+
+## Sorting
+
+For sorting the `sort` url parameter can be used. The `sort` value is a json encoded array of objects with `property` and `direction` keys.
+
+Molecules by default are sorted by:
+````json
+        [{"property":"probability","direction":"DESC"},
+         {"property":"metid","direction":"ASC"}]
+````
+Valid `direction` values are 'DESC' or 'ASC'.
+Valid `property` values are:
+
+* assigned
+* score
+* deltappm
+* metid, molecule id
+* probability
+* smiles, contains inchikey
+* molformula
+* isquery, whether molecules was given as query or is a result of a reaction
+* origin, name of molecule
+* nhits, number of ms level 1 scans where fragments of this molecule where found
+* mim, monoisotopic mass
+* natoms, number of non-hydrogen atoms
+* logp
+* reference
+
+## Molecules as json [/results/{jobid}/metabolites.json{?scanid}]
+
++ Parameters
+    + jobid ... (string) Job identifier
+    + scanid ... (number) Filter molecules on having fragments in selected scan.
+
+### Retrieve list of molecules [GET]
+
++ Response 200 (application/json)
+
+        {
+            "totalUnfiltered": 209, 
+            "total": 209, 
+            "rows": [{
+                "origin": "2-Hydroxymuconic semialdehyde (5280366)", 
+                "smiles": "MTOBWJUHQXQURZ", 
+                "probability": null, 
+                "molformula": "C6H6O4", 
+                "assigned": false, "reference": 
+                "<a href=\"http://www.genome.jp/dbget-bin/www_bget?cpd:C00682\" target=\"_blank\">C00682 (Kegg)</a>", 
+                "mol": "5280366\n  -OEChem-08091222412D\n\n 10  9  0     0  0  0  0  0  0999 V2000 ... abbreviated for readability\n", 
+                "reactionsequence": {}, 
+                "isquery": true, 
+                "mim": 142.026609, 
+                "logp": 0.2, 
+                "level": 1, 
+                "metid": 2, 
+                "nhits": 1
+            }],
+            "scans": [{
+                "rt": 2.1296, 
+                "id": 80
+            }]
+        }
+
+## Molecules as comma seperated file [/results/{jobid}/metabolites.csv{?scanid}]
+
++ Parameters
+    + jobid ... (string) Job identifier
+    + scanid ... (number) Filter molecules on having fragments in selected scan.
+
+### Retrieve list of molecules [GET]
+
++ Response 200 (text/csv)
+
+        origin,smiles,probability,reactionsequence,nhits,molformula,mim,isquery,logp,reference
+        2-Hydroxymuconic semialdehyde (5280366),MTOBWJUHQXQURZ,,{},1,C6H6O4,142.026609,True,0.2,"<a href=""http://www.genome.jp/dbget-bin/www_bget?cpd:C00682"" target=""_blank"">C00682 (Kegg)</a>"
+        "cis,cis-muconate (5280518)",TXXHDPDFNKHHGW,,{},1,C6H6O4,142.026609,True,0.2,"<a href=""http://www.genome.jp/dbget-bin/www_bget?cpd:C02480"" target=""_blank"">C02480 (Kegg)</a><br><a href=""http://www.genome.jp/dbget-bin/www_bget?cpd:C03647"" target=""_blank"">C03647 (Kegg)</a>"
+
+## Molecules as SDF file [/results/{jobid}/metabolites.sdf{?scanid}]
+
++ Parameters
+    + jobid ... (string) Job identifier
+    + scanid ... (number) Filter molecules on having fragments in selected scan.
+
+### Retrieve list of molecules [GET]
+
++ Response 200 (chemical/x-mdl-sdfile)
+
+        5280366
+          -OEChem-08091222412D
+        
+         10  9  0     0  0  0  0  0  0999 V2000
+            4.2690    1.2500    0.0000 O   0  0  0
+            2.5369    0.2500    0.0000 O   0  0  0
+            8.5991   -0.2500    0.0000 O   0  0  0
+            3.4030   -1.2500    0.0000 O   0  0  0
+            5.1350   -0.2500    0.0000 C   0  0  0
+            6.0010    0.2500    0.0000 C   0  0  0
+            4.2690    0.2500    0.0000 C   0  0  0
+            6.8671   -0.2500    0.0000 C   0  0  0
+            3.4030   -0.2500    0.0000 C   0  0  0
+            7.7331    0.2500    0.0000 C   0  0  0
+          1  7  2  0
+          2  9  1  0
+          3 10  1  0
+          4  9  2  0
+          5  6  2  0
+          5  7  1  0
+          6  8  1  0
+          7  9  1  0
+          8 10  2  0
+        M  END
+        > <origin>
+        2-Hydroxymuconic semialdehyde (5280366)
+        
+        > <smiles>
+        MTOBWJUHQXQURZ
+        
+        > <probability>
+        None
+        
+        > <reactionsequence>
+        {}
+        
+        > <nhits>
+        1
+        
+        > <molformula>
+        C6H6O4
+        
+        > <mim>
+        142.026609
+        
+        > <logp>
+        0.2
+        
+        > <reference>
+        <a href="http://www.genome.jp/dbget-bin/www_bget?cpd:C00682" target="_blank">C00682 (Kegg)</a>
+        
+        $$$$
+
+# Group Mass spectra
+
+## Chromatogram [/results/{jobid}/chromatogram.json]
+
++ Parameters
+    + jobid ... (string) Job identifier
+
+### Retrieve chromatogram [GET]
+
+Array of ms level 1 scans ordered by retention time.
+
+Scan fields:
+
+* id, scan identifier
+* rt, retention time on which scan was taken
+* intensity, highest intensity for current scan
+* ap, number of assigned peaks in scan
+
++ Response 200 (application/json)
+
+        {
+           "cutoff" : 0,
+           "scans" : [
+              {
+                 "ap" : 0,
+                 "rt" : 0.013115,
+                 "id" : 1,
+                 "intensity" : 14556.6
+              },
+              {
+                 "rt" : 0.0278533333333333,
+                 "intensity" : 14144.9,
+                 "id" : 2,
+                 "ap" : 0
+              },
+              {
+                 "rt" : 0.0636,
+                 "id" : 3,
+                 "intensity" : 13740.4,
+                 "ap" : 0
+              },
+              {
+                 "id" : 3882,
+                 "intensity" : 476049,
+                 "rt" : 94.9393333333333,
+                 "ap" : 0
+              }
+           ]
+        }
+        
+## Mass spectra scan [/results/{jobid}/mspectra/{scanid}.json{?mslevel}]
+
++ Parameters
+    + jobid ... (string) Job identifier
+    + scanid ... (number) Scan identifier
+    + mslevel ... (optional, number) Level of spectra. First level is 1.
+
+### Retrieve peaks of a mass spectra scan [GET]
+
+Response of a scan on ms level 2:
+
+```json
+        {
+           "mslevel" : 2,
+           "cutoff" : 917380,
+           "peaks" : [
+              {
+                 "intensity" : 9429.9736328125,
+                 "mz" : 131.485321044922,
+                 "assigned_metid" : null
+              },
+              {
+                 "intensity" : 5026.97900390625,
+                 "assigned_metid" : null,
+                 "mz" : 131.522369384766
+              }
+           ],
+           "precursor" : {
+              "mz" : 479.2140198,
+              "id" : 2419
+           }
+        }
+````
+
+Response of a scan on ms level 1:
+
++ Response 200 (application/json)
+
+        {
+           "mslevel" : 1,
+           "peaks" : [
+              {
+                 "intensity" : 6326.3271484375,
+                 "mz" : 96.9602890014648,
+                 "assigned_metid" : null
+              },
+              {
+                 "intensity" : 17530.162109375,
+                 "mz" : 112.985801696777,
+                 "assigned_metid" : null
+              }
+           ],
+           "precursor" : {
+              "mz" : null,
+              "id" : 0
+           },
+           "cutoff" : 0
+        }
+
+## Extracted ion chromatogram [/results/{jobid}/extractedionchromatogram/{metid}.json]
+Returns intensities in all ms level 1 scans of the selected molecule.
+
++ Parameters
+    + jobid ... (string) Job identifier
+    + metid ... (number) Molecule identifier
+
+### Retrieve extracted ion chromatogram [GET]
+
++ Response 200 (application/json)
+
+        {
+           "chromatogram" : [
+              {
+                 "rt" : 0.013115,
+                 "intensity" : 0
+              },
+              {
+                 "rt" : 8.39626666666667,
+                 "intensity" : 282228.875
+              }
+           ],
+           "scans" : [
+              {
+                 "id" : 329,
+                 "rt" : 8.04626666666667
+              },
+              {
+                 "id" : 343,
+                 "rt" : 8.39626666666667
+              }
+           ]
+        }
+
+# Group Fragments
+
+## Fragments [/results/{jobid}/fragments/{scanid}/{metid}.json]
+
++ Parameters
+    + jobid ... (string) Job identifier
+    + scanid ... (number) Scan identifier
+    + metid ... (number) Molecule identifier
+
+### Retrieve list of fragments [GET]
+
++ Response 200 (application/json)
+
+        {
+           "expanded" : true,
+           "children" : [
+              {
+                 "leaf" : false,
+                 "scanid" : 1,
+                 "deltah" : -1.0078250321,
+                 "score" : 1.77586696289526,
+                 "mass" : 354.0950821767,
+                 "formula" : "C16H18O9<br>[M-H]-",
+                 "isAssigned" : false,
+                 "mz" : 353.087494,
+                 "mslevel" : 1,
+                 "mol" : "Chlorogenic\n     RDKit          2D\n\n 25 26  0  0  0  0  0  0  0  0999 V2000\n   -2.4601   -2.4528    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.9368   -2.1899    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.9029   -3.3373    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4475   -0.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7478   -1.5273    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.4098    0.3712    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.8944    1.7799    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.8566    2.9305    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4167    2.0379    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.9013    3.4465    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.4545    0.8872    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9768    1.1452    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0146   -0.0055    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5300   -1.4142    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4631    0.2525    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4253   -0.8982    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9030   -0.6402    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.8652   -1.7909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3429   -1.5329    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8583   -0.1242    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.3359    0.1338    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8960    1.0264    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4114    2.4351    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4184    0.7685    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.9699   -0.5215    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  4  2  1  6\n  4  5  1  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  1\n  7  9  1  0\n  9 10  1  1\n  9 11  1  0\n 11 12  1  6\n 12 13  1  0\n 13 14  2  0\n 13 15  1  0\n 15 16  2  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19 20  2  0\n 20 21  1  0\n 20 22  1  0\n 22 23  1  0\n 22 24  2  0\n 11 25  1  0\n 24 17  1  0\n 25  4  1  0\nM  END\n",
+                 "metid" : 1,
+                 "children" : [
+                    {
+                       "metid" : 1,
+                       "atoms" : ",0,1,2,3,4,5,6,7,8,9,10,11,24",
+                       "mslevel" : 2,
+                       "expanded" : false,
+                       "mol" : "Chlorogenic\n     RDKit          2D\n\n 25 26  0  0  0  0  0  0  0  0999 V2000\n   -2.4601   -2.4528    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.9368   -2.1899    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.9029   -3.3373    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4475   -0.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7478   -1.5273    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.4098    0.3712    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.8944    1.7799    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.8566    2.9305    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4167    2.0379    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.9013    3.4465    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.4545    0.8872    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9768    1.1452    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0146   -0.0055    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5300   -1.4142    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4631    0.2525    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4253   -0.8982    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9030   -0.6402    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.8652   -1.7909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3429   -1.5329    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8583   -0.1242    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.3359    0.1338    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8960    1.0264    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4114    2.4351    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4184    0.7685    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.9699   -0.5215    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  4  2  1  6\n  4  5  1  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  1\n  7  9  1  0\n  9 10  1  1\n  9 11  1  0\n 11 12  1  6\n 12 13  1  0\n 13 14  2  0\n 13 15  1  0\n 15 16  2  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19 20  2  0\n 20 21  1  0\n 20 22  1  0\n 22 23  1  0\n 22 24  2  0\n 11 25  1  0\n 24 17  1  0\n 25  4  1  0\nM  END\n",
+                       "mz" : 191.055756,
+                       "fragid" : 2,
+                       "deltappm" : -1.8616853395642,
+                       "scanid" : 2,
+                       "deltah" : 0,
+                       "leaf" : false,
+                       "formula" : "C7H11O6<br>[X]-",
+                       "mass" : 191.0555630857,
+                       "score" : 2.51612316121282
+                    },
+                    {
+                       "fragid" : 28,
+                       "deltappm" : -2.00727980703101,
+                       "mslevel" : 2,
+                       "mol" : "Chlorogenic\n     RDKit          2D\n\n 25 26  0  0  0  0  0  0  0  0999 V2000\n   -2.4601   -2.4528    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.9368   -2.1899    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.9029   -3.3373    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.4475   -0.7795    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.7478   -1.5273    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.4098    0.3712    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -4.8944    1.7799    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -5.8566    2.9305    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -3.4167    2.0379    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.9013    3.4465    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.4545    0.8872    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.9768    1.1452    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.0146   -0.0055    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.5300   -1.4142    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.4631    0.2525    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.4253   -0.8982    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.9030   -0.6402    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    4.8652   -1.7909    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.3429   -1.5329    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.8583   -0.1242    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    8.3359    0.1338    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    5.8960    1.0264    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    6.4114    2.4351    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.4184    0.7685    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.9699   -0.5215    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  2  0\n  2  3  1  0\n  4  2  1  6\n  4  5  1  0\n  4  6  1  0\n  6  7  1  0\n  7  8  1  1\n  7  9  1  0\n  9 10  1  1\n  9 11  1  0\n 11 12  1  6\n 12 13  1  0\n 13 14  2  0\n 13 15  1  0\n 15 16  2  0\n 16 17  1  0\n 17 18  2  0\n 18 19  1  0\n 19 20  2  0\n 20 21  1  0\n 20 22  1  0\n 22 23  1  0\n 22 24  2  0\n 11 25  1  0\n 24 17  1  0\n 25  4  1  0\nM  END\n",
+                       "expanded" : true,
+                       "atoms" : ",0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+                       "mz" : 353.087097,
+                       "metid" : 1,
+                       "score" : 0,
+                       "mass" : 354.0950821767,
+                       "formula" : "C16H18O9<br>[X-H]-",
+                       "deltah" : -1.0078250321,
+                       "scanid" : 2,
+                       "leaf" : true
+                    }
+                 ],
+                 "atoms" : ",0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
+                 "expanded" : true,
+                 "deltappm" : -0.882910341670981,
+                 "fragid" : 1
+              }
+           ]
+        }
+
+## Assign molecule to peak [/rpc/{jobid}/assign] 
+
++ Parameters
+    + jobid ... (string) Job identifier
+
+### Assign molecule to peak [POST]
+
++ Request (application/x-www-form-urlencoded; charset=UTF-8)
+
+        scanid=1&
+        metid=1&
+        mz=353.087494
+
++ Response 200 (application/json)
+
+        {
+            "success": true, 
+            "jobid": "aa939da6-bec1-4c82-8df5-df48391e534b"
+        }
+
+## Unassign molecules from peak [/rpc/{jobid}/unassign]
+
++ Parameters
+    + jobid ... (string) Job identifier
+
+### Unassign any molecules from peak [POST]
+
++ Request (application/x-www-form-urlencoded; charset=UTF-8)
+
+        scanid=1&
+        mz=353.087494
+
++ Response 200 (application/json)
+
+        {
+            "success": true, 
+            "jobid": "aa939da6-bec1-4c82-8df5-df48391e534b"
+        }
