@@ -9,5 +9,4 @@ Generate html
 -------------
 
     npm install aglio
-    aglio -t default-multi -i apiary.apib -o index.html
-
+    node_modules/.bin/aglio -t default-multi -i apiary.apib -o index.html

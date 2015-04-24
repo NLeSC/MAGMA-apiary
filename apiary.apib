@@ -349,11 +349,11 @@ Used for debugging.
         WARNING:root:Build spectra
         WARNING:root:Searching structures
         WARNING:root:calculating on 1 cpus !!!
-        Metabolite 1 -> 1573 fragments: CHLOROGENIC ACID (1794427)
+        Molecule 1 -> 1573 fragments: CHLOROGENIC ACID (1794427)
         Scan: 1 - Mz: 353.087805745 - Score: 62790.1532877
-        Metabolite 2 -> 1078 fragments: Scopolin (439514)
+        Molecule 2 -> 1078 fragments: Scopolin (439514)
         Scan: 1 - Mz: 353.087805745 - Score: 221988.051709
-        Metabolite 3 -> 1327 fragments: Biflorin (441959)
+        Molecule 3 -> 1327 fragments: Biflorin (441959)
         Scan: 1 - Mz: 353.087805745 - Score: 249551.191514
 
 ## Stdout log [/results/{jobid}/stdout.txt]
@@ -440,6 +440,11 @@ Example 1: Molecules which have been found in MS data
 Example 2: Molecules which are products of esterase reaction of molecule with id 1
 [{"reactant":1,"name":"esterase","type":"reaction","field":"reactionsequence"}]
 
+## Filtering on scan or mz.
+
+Use `scanid` url parameter to return molecules that have hits in that scan.
+Use `scanid` and `mz` url parameter to return molecules that have fragments with that mz.
+
 ## Paging
 
 For paging the following url parameters can be used:
@@ -448,6 +453,8 @@ For paging the following url parameters can be used:
 * limit, Maximum nr of molecules to return
 
 For example `?limit=50&start=100` will show molecules 100 till 150.
+
+When `molid` is added as url parameter the page which contains the molecule will be returned.
 
 ## Sorting
 
@@ -476,7 +483,7 @@ Valid `property` values are:
 * logp
 * reference
 
-## Molecules as json [/results/{jobid}/metabolites.json{?scanid}]
+## Molecules as json [/results/{jobid}/molecules.json{?scanid}]
 
 + Parameters
     + jobid ... (string) Job identifier
@@ -522,7 +529,7 @@ Returned fields:
             }]
         }
 
-## Molecules as comma seperated file [/results/{jobid}/metabolites.csv{?scanid}]
+## Molecules as comma seperated file [/results/{jobid}/molecules.csv{?scanid}]
 
 + Parameters
     + jobid ... (string) Job identifier
@@ -536,7 +543,7 @@ Returned fields:
         2-Hydroxymuconic semialdehyde (5280366),MTOBWJUHQXQURZ,,{},1,C6H6O4,142.026609,True,0.2,"<a href=""http://www.genome.jp/dbget-bin/www_bget?cpd:C00682"" target=""_blank"">C00682 (Kegg)</a>"
         "cis,cis-muconate (5280518)",TXXHDPDFNKHHGW,,{},1,C6H6O4,142.026609,True,0.2,"<a href=""http://www.genome.jp/dbget-bin/www_bget?cpd:C02480"" target=""_blank"">C02480 (Kegg)</a><br><a href=""http://www.genome.jp/dbget-bin/www_bget?cpd:C03647"" target=""_blank"">C03647 (Kegg)</a>"
 
-## Molecules as SDF file [/results/{jobid}/metabolites.sdf{?scanid}]
+## Molecules as SDF file [/results/{jobid}/molecules.sdf{?scanid}]
 
 + Parameters
     + jobid ... (string) Job identifier
@@ -684,6 +691,7 @@ Response of a scan on ms level 2:
 ````
 
 Response of a scan on ms level 1:
+Fragments property is array of peaks which have fragments.
 
 + Response 200 (application/json)
 
@@ -705,6 +713,9 @@ Response of a scan on ms level 1:
               "mz" : null,
               "id" : 0
            },
+           "fragments": [{
+              "mz" : 112.985801696777
+           }],
            "cutoff" : 0
         }
 
